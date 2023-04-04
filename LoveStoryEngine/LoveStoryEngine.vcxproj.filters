@@ -13,10 +13,60 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Pliki nagłówkowe\StoryElements">
+      <UniqueIdentifier>{e690ce72-7012-48ad-b0cd-e2d8d23759ca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Pliki źródłowe\StoryElements">
+      <UniqueIdentifier>{d1572893-7db5-4144-93fb-f9b2eea23e74}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="LoveStoryEngine.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
+    <ClCompile Include="Character.cpp">
+      <Filter>Pliki źródłowe\StoryElements</Filter>
+    </ClCompile>
+    <ClCompile Include="ChooseClothesEvent.cpp">
+      <Filter>Pliki źródłowe\StoryElements</Filter>
+    </ClCompile>
+    <ClCompile Include="Event.cpp">
+      <Filter>Pliki źródłowe\StoryElements</Filter>
+    </ClCompile>
+    <ClCompile Include="Image.cpp">
+      <Filter>Pliki źródłowe\StoryElements</Filter>
+    </ClCompile>
+    <ClCompile Include="MakeProtagonistEvent.cpp">
+      <Filter>Pliki źródłowe\StoryElements</Filter>
+    </ClCompile>
+    <ClCompile Include="Message.cpp">
+      <Filter>Pliki źródłowe\StoryElements</Filter>
+    </ClCompile>
+    <ClCompile Include="Music.cpp">
+      <Filter>Pliki źródłowe\StoryElements</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Character.h">
+      <Filter>Pliki nagłówkowe\StoryElements</Filter>
+    </ClInclude>
+    <ClInclude Include="ChooseClothesEvent.h">
+      <Filter>Pliki nagłówkowe\StoryElements</Filter>
+    </ClInclude>
+    <ClInclude Include="Event.h">
+      <Filter>Pliki nagłówkowe\StoryElements</Filter>
+    </ClInclude>
+    <ClInclude Include="Image.h">
+      <Filter>Pliki nagłówkowe\StoryElements</Filter>
+    </ClInclude>
+    <ClInclude Include="MakeProtagonistEvent.h">
+      <Filter>Pliki nagłówkowe\StoryElements</Filter>
+    </ClInclude>
+    <ClInclude Include="Message.h">
+      <Filter>Pliki nagłówkowe\StoryElements</Filter>
+    </ClInclude>
+    <ClInclude Include="Music.h">
+      <Filter>Pliki nagłówkowe\StoryElements</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
