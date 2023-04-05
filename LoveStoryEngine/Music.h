@@ -11,8 +11,6 @@ public:
 		this->_name = name;
 		this->_path = path;
 
-		SDL_Init(SDL_INIT_AUDIO);
-		Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048);
 		this->_musicStatus = this->_loadMusic(path.c_str());
 	}
 	int getId();

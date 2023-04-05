@@ -34,7 +34,7 @@ bool Music::_loadMusic(const char* filename)
 {
     this->_music = Mix_LoadMUS(filename);
     if (this->_music == nullptr) {
-        printf("Couldn't load file: %s\n", filename);
+        printf("Unable to load music! SDL_Error: %s\n", filename);
         return false;
     }
     return true;

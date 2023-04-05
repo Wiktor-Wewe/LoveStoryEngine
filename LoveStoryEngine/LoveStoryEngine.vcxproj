@@ -155,6 +155,9 @@
     <ClCompile Include="MakeProtagonistEvent.cpp" />
     <ClCompile Include="Message.cpp" />
     <ClCompile Include="Music.cpp" />
+    <ClCompile Include="Protagonist.cpp" />
+    <ClCompile Include="Sfx.cpp" />
+    <ClCompile Include="Story.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Character.h" />
@@ -164,6 +167,9 @@
     <ClInclude Include="MakeProtagonistEvent.h" />
     <ClInclude Include="Message.h" />
     <ClInclude Include="Music.h" />
+    <ClInclude Include="Protagonist.h" />
+    <ClInclude Include="Sfx.h" />
+    <ClInclude Include="Story.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
