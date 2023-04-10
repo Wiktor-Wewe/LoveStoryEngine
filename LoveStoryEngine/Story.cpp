@@ -290,24 +290,43 @@ void Story::_showMPE(MakeProtagonistEvent* mpe)
     this->_getPlayer()->setName(name);
 
     int playerInput = 0;
+    Image* buff = nullptr;
 
     std::cout << "Select your skin color: " << std::endl;
     for (int i = 0; i < mpe->getSkins().size(); i++) {
-        std::cout << "[" << i << "] " << mpe->getSkins()[i][0] << std::endl;
+        buff = this->_findImageById(mpe->getSkins()[i][0]);
+        if (buff != nullptr) {
+            std::cout << "[" << i << "] " << buff->getName() << std::endl;
+        }
+        else {
+            std::cout << "[" << i << "] cant find image with id: " << mpe->getSkins()[i][0] << std::endl;
+        }
     }
     std::cin >> playerInput;
     this->_getPlayer()->setGSkins(mpe->getSkins()[playerInput]);
 
     std::cout << "Select your face: " << std::endl;
     for (int i = 0; i < mpe->getFaces().size(); i++) {
-        std::cout << "[" << i << "] " << mpe->getFaces()[i][0] << std::endl;
+        buff = this->_findImageById(mpe->getFaces()[i][0]);
+        if (buff != nullptr) {
+            std::cout << "[" << i << "] " << buff->getName() << std::endl;
+        }
+        else {
+            std::cout << "[" << i << "] cant find image with id: " << mpe->getFaces()[i][0] << std::endl;
+        }
     }
     std::cin >> playerInput;
     this->_getPlayer()->setGFaces(mpe->getFaces()[playerInput]);
 
     std::cout << "Select your hair color: " << std::endl;
     for (int i = 0; i < mpe->getHairs().size(); i++) {
-        std::cout << "[" << i << "] " << mpe->getHairs()[i][0] << std::endl;
+        buff = this->_findImageById(mpe->getHairs()[i][0]);
+        if (buff != nullptr) {
+            std::cout << "[" << i << "] " << buff->getName() << std::endl;
+        }
+        else {
+            std::cout << "[" << i << "] cant find image with id: " << mpe->getHairs()[i][0] << std::endl;
+        }
     }
     std::cin >> playerInput;
     this->_getPlayer()->setGHairs(mpe->getHairs()[playerInput]);
@@ -322,9 +341,17 @@ void Story::_showCCE(ChooseClothesEvent* cce)
     std::cout << "next message id: " << cce->getNextMessageId() << std::endl;
     std::cout << std::endl;
 
+    Image* buff = nullptr;
+
     std::cout << cce->getText() << std::endl;
     for (int i = 0; i < cce->getClothes().size(); i++) {
-        std::cout << "[" << i << "] " << cce->getClothes()[i][0] << std::endl;
+        buff = this->_findImageById(cce->getClothes()[i][0]);
+        if (buff != nullptr) {
+            std::cout << "[" << i << "] " << buff->getName() << std::endl;
+        }
+        else {
+            std::cout << "[" << i << "] cant find image with id: " << cce->getClothes()[i][0] << std::endl;
+        }
     }
     int playerInput = 0;
     std::cin >> playerInput;
@@ -332,7 +359,13 @@ void Story::_showCCE(ChooseClothesEvent* cce)
 
     std::cout << "Player clothes: " << std::endl;
     for (int i = 0; i < this->_getPlayer()->getGClothes().size(); i++) {
-        std::cout << this->_getPlayer()->getGClothes()[i] << std::endl;
+        buff = this->_findImageById(this->_getPlayer()->getGClothes()[i]);
+        if (buff != nullptr) {
+            std::cout << buff->getName() << std::endl;
+        }
+        else {
+            std::cout << "cant find image with id: " << this->_getPlayer()->getGClothes()[i] << std::endl;
+        }
     }
     std::cout << std::endl;
     system("pause");
@@ -346,7 +379,7 @@ void Story::_printInfoAboutPlayer()
     Image* hairs = this->_findImageById(this->_getPlayer()->getGHairs()[id]);
 
     std::cout << std::endl;
-    std::cout << "Name: " << this->_name << std::endl;
+    std::cout << "Name: " << this->_getPlayer()->getName() << std::endl;
 
     if (skin != nullptr) {
         std::cout << "Current skin: " << skin->getName() << std::endl;
