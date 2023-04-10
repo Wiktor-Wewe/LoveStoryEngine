@@ -29,8 +29,6 @@ public:
 	std::vector<int> getGClothes();
 	int getCurrentSpriteId();
 
-	void printInfoAboutPlayer();
-
 private:
 	std::string _name;
 

@@ -1,6 +1,8 @@
 ﻿#include <SDL.h>
 #include <stdio.h>
 #include <SDL_mixer.h>
+#include "Story.h"
+#include <fstream>
 
 const int SCREEN_WIDTH = 640;
 const int SCREEN_HEIGHT = 480;
@@ -11,6 +13,13 @@ int main(int argc, char* args[])
     SDL_Surface* screenSurface = NULL;
     SDL_Surface* image = NULL;
     SDL_Rect imageRect;
+
+    std::fstream file("script2.wesc", std::ios::in | std::ios::binary);
+    if (file.good()) {
+        Story s(&file);
+        s.play();
+        return 0;
+    }
 
     // Initialize SDL
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0)

@@ -15,7 +15,7 @@
 class Story
 {
 public:
-	Story()
+	Story(std::fstream* file = nullptr)
 	{
 		this->_name = std::string();
 		this->_info = std::string();
@@ -31,6 +31,10 @@ public:
 		this->_Musics = std::vector<Music>();
 		this->_Player = (Protagonist*)malloc(sizeof(Protagonist));
 		this->_Sfxs = std::vector<Sfx>();
+
+		if (file != nullptr) {
+			this->loadStory(file);
+		}
 	}
 
 	std::string getName();
@@ -63,6 +67,9 @@ private:
 	Message* _findMessageById(int id);
 	MakeProtagonistEvent* _getMpei();
 	ChooseClothesEvent* _findCceById(int id);
+	Image* _findImageById(int id);
+	Music* _findMusicById(int id);
+	Sfx* _findSfxById(int id);
 	Protagonist* _getPlayer();
 
 	// show
@@ -71,6 +78,7 @@ private:
 	void _showEvent(Event* e);
 	void _showMPE(MakeProtagonistEvent* mpe);
 	void _showCCE(ChooseClothesEvent* cce);
+	void _printInfoAboutPlayer();
 
 	void _setName(std::string name);
 	void _setInfo(std::string info);

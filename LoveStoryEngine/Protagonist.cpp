@@ -60,16 +60,3 @@ int Protagonist::getCurrentSpriteId()
 {
 	return this->_currentSpriteId;
 }
-
-void Protagonist::printInfoAboutPlayer()
-{
-	int id = this->getCurrentSpriteId();
-
-	std::cout << std::endl;
-	std::cout << "Name: " << this->_name << std::endl;
-	std::cout << "Current skin: " << this->getGSkins()[id] << std::endl;
-	std::cout << "Current face: " << this->getGFaces()[id] << std::endl;
-	std::cout << "Current hairs: " << this->getGHairs()[id] << std::endl;
-	std::cout << "Current clothes: " << this->getGClothes()[id] << std::endl;
-	std::cout << std::endl;
-}
