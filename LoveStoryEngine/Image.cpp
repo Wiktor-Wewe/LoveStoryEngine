@@ -15,10 +15,10 @@ std::string Image::getPath()
     return this->_path;
 }
 
-bool Image::_loadImage()
+bool Image::_loadSurface()
 {
-	this->_image = SDL_LoadBMP(this->_path.c_str());
-	if (this->_image == NULL)
+	this->_surface = SDL_LoadBMP(this->_path.c_str());
+	if (this->_surface == NULL)
 	{
 		printf("Unable to load image! SDL_Error: %s\n", SDL_GetError());
 		return false;
@@ -26,7 +26,23 @@ bool Image::_loadImage()
 	return true;
 }
 
-bool Image::getImgStatus()
+bool Image::_loadTexture()
 {
-	return this->_imgStatus;
+	this->_texture = SDL_CreateTextureFromSurface(this->_renderer, this->_surface);
+	if (this->_texture == NULL)
+	{
+		printf("Unable to load image! SDL_Error: %s\n", SDL_GetError());
+		return false;
+	}
+	return true;
+}
+
+bool Image::getSurfaceStatus()
+{
+	return this->_surfaceStatus;
+}
+
+bool Image::getTextureStatus()
+{
+	return this->_textureStatus;
 }

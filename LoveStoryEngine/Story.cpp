@@ -58,13 +58,20 @@ int Story::loadStory(std::fstream* file)
     return 0;
 }
 
+int Story::init(SDL_Window* window, SDL_Renderer* renderer)
+{
+    this->_window = window;
+    this->_renderer = renderer;
+    return 0;
+}
+
 int Story::play()
 {
     Message* currentMessage = this->_findMessageById(1);
     if (currentMessage) {
-        ChooseClothesEvent* currentCCE = NULL;
-        MakeProtagonistEvent* currentMPE = NULL;
-        Event* currentEvent = NULL;
+        ChooseClothesEvent* currentCCE = nullptr;
+        MakeProtagonistEvent* currentMPE = nullptr;
+        Event* currentEvent = nullptr;
 
         while (1)
         {
@@ -78,7 +85,7 @@ int Story::play()
                 }
                 else {
                     int nextEvent = currentMessage->getNextEvent();
-                    currentMessage = NULL;
+                    currentMessage = nullptr;
 
                     currentEvent = this->_findEventById(nextEvent);
                 }
@@ -92,18 +99,18 @@ int Story::play()
                     std::cin >> nextMessage;
 
                     std::vector<int> nextMessages = currentEvent->getNextMessages();
-                    currentEvent = NULL;
+                    currentEvent = nullptr;
                     currentMessage = this->_findMessageById(nextMessages[nextMessage]);
                 }
                 else {
                     int mpei = currentEvent->getMpei();
                     int ccei = currentEvent->getCcei();
                     if (mpei != 0) {
-                        currentEvent = NULL;
+                        currentEvent = nullptr;
                         currentMPE = this->_getMpei();
                     }
                     else if (ccei != 0) {
-                        currentEvent = NULL;
+                        currentEvent = nullptr;
                         currentCCE = this->_findCceById(ccei);
                     }
                     else {
@@ -117,14 +124,14 @@ int Story::play()
 
                 int nextMessageId = currentMPE->getNextMessageId();
                 currentMessage = this->_findMessageById(nextMessageId);
-                currentMPE = NULL;
+                currentMPE = nullptr;
             }
             else if (currentCCE) {
                 this->_clsAndShowInfo();
                 this->_showCCE(currentCCE);
 
                 int nextMessageId = currentCCE->getNextMessageId();
-                currentCCE = NULL;
+                currentCCE = nullptr;
                 currentMessage = this->_findMessageById(nextMessageId);
             }
             else {
@@ -690,7 +697,7 @@ void Story::_loadImages(std::fstream* file)
         file->read(path, sizeOfPath);
         strPath = path;
         this->_wipeStrBuff(path);
-        this->_Images.push_back(Image(buffId, strName, strPath));
+        this->_Images.push_back(Image(buffId, strName, strPath, this->_renderer));
     }
 }
 

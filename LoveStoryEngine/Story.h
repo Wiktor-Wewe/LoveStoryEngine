@@ -43,6 +43,7 @@ public:
 	std::string getDate();
 
 	int loadStory(std::fstream* file);
+	int init(SDL_Window* window, SDL_Renderer* renderer);
 	int play();
 
 private:
@@ -105,9 +106,12 @@ private:
 	void _loadCompilationInfo(std::fstream* file);
 	bool _checkEndOfFile(std::fstream* file);
 
-
 	void _swapBytes(int& x);
 	void _wipeStrBuff(char* buff);
 	void _wipeStrBuff(char* buff, int size);
+
+	// play
+	SDL_Window* _window;
+	SDL_Renderer* _renderer;
 };
 
