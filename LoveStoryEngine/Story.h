@@ -70,6 +70,7 @@ private:
 	Image* _findImageById(int id);
 	Music* _findMusicById(int id);
 	Sfx* _findSfxById(int id);
+	Character* _findCharacterById(int id);
 	Protagonist* _getPlayer();
 
 	// show
@@ -82,6 +83,7 @@ private:
 	std::string _tryGetName(Image* x, int id);
 	std::string _tryGetName(Music* x, int id);
 	std::string _tryGetName(Sfx* x, int id);
+	std::string _tryGetName(Character* x, int id);
 	
 	void _setName(std::string name);
 	void _setInfo(std::string info);

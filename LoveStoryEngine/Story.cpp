@@ -205,6 +205,16 @@ Sfx* Story::_findSfxById(int id)
     return nullptr;
 }
 
+Character* Story::_findCharacterById(int id)
+{
+    for (int i = 0; i < this->_Characters.size(); i++) {
+        if (this->_Characters[i].getId() == id) {
+            return &this->_Characters[i];
+        }
+    }
+    return nullptr;
+}
+
 Protagonist* Story::_getPlayer()
 {
     return this->_Player;
@@ -224,22 +234,39 @@ void Story::_clsAndShowInfo()
 
 void Story::_showMessage(Message* m)
 {
+    Character* character = this->_findCharacterById(m->getCharacterId());
+    Image* img = this->_findImageById(m->getBgImageId());
+    Music* music = nullptr;
+    Sfx* sfx = nullptr;
+
     std::cout << "id: " << m->getId() << std::endl;
-    std::cout << "character id: " << m->getCharacterId() << std::endl;
-    std::cout << "musics id: "; 
+    std::cout << "characters name: " << this->_tryGetName(character, m->getCharacterId()) << std::endl;
+    std::cout << "musics: "; 
     for (int i = 0; i < m->getAllMusicId().size(); i++) {
-        std::cout << m->getAllMusicId()[i] << " ";
+        music = this->_findMusicById(m->getAllMusicId()[i]);
+        std::cout << this->_tryGetName(music, m->getAllMusicId()[i]);
+        if (i == m->getAllMusicId().size() - 1) {
+            std::cout << std::endl;
+        }
+        else {
+            std::cout << ", ";
+        }
     }
-    std::cout << std::endl;
-    std::cout << "sfxs id: ";
+    std::cout << "sfxs: ";
     for (int i = 0; i < m->getAllSfxId().size(); i++) {
-        std::cout << m->getAllSfxId()[i] << " ";
+        sfx = this->_findSfxById(m->getAllSfxId()[i]);
+        std::cout << this->_tryGetName(sfx, m->getAllSfxId()[i]);
+        if (i == m->getAllSfxId().size() - 1) {
+            std::cout << std::endl;
+        }
+        else {
+            std::cout << ", ";
+        }
     }
-    std::cout << std::endl;
     std::cout << "sprite id: " << m->getSpriteId() << std::endl;
     std::cout << "animation id: " << m->getAnimationId() << std::endl;
     std::cout << "clothes id: " << m->getClothesId() << std::endl;
-    std::cout << "bg image id: " << m->getBgImageId() << std::endl;
+    std::cout << "bg image: " << this->_tryGetName(img, m->getBgImageId()) << std::endl;
     std::cout << "next message id: " << m->getNextMessage() << std::endl;
     std::cout << "next event id: " << m->getNextEvent() << std::endl;
     std::cout << "message x: " << m->getMessageX() << std::endl;
@@ -392,6 +419,14 @@ std::string Story::_tryGetName(Sfx* x, int id)
         return x->getName();
     }
     return "Cant find sfx with id: " + std::to_string(id);
+}
+
+std::string Story::_tryGetName(Character* x, int id)
+{
+    if (x != nullptr) {
+        return x->getName();
+    }
+    return "Cant find character with id: " + std::to_string(id);
 }
 
 void Story::_setName(std::string name)
