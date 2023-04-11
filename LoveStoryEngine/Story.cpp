@@ -226,7 +226,7 @@ void Story::_showMessage(Message* m)
 {
     std::cout << "id: " << m->getId() << std::endl;
     std::cout << "character id: " << m->getCharacterId() << std::endl;
-    std::cout << "musics id: ";
+    std::cout << "musics id: "; 
     for (int i = 0; i < m->getAllMusicId().size(); i++) {
         std::cout << m->getAllMusicId()[i] << " ";
     }
@@ -295,12 +295,7 @@ void Story::_showMPE(MakeProtagonistEvent* mpe)
     std::cout << "Select your skin color: " << std::endl;
     for (int i = 0; i < mpe->getSkins().size(); i++) {
         buff = this->_findImageById(mpe->getSkins()[i][0]);
-        if (buff != nullptr) {
-            std::cout << "[" << i << "] " << buff->getName() << std::endl;
-        }
-        else {
-            std::cout << "[" << i << "] cant find image with id: " << mpe->getSkins()[i][0] << std::endl;
-        }
+        std::cout << "[" << i << "] " << this->_tryGetName(buff, mpe->getSkins()[i][0]) << std::endl;
     }
     std::cin >> playerInput;
     this->_getPlayer()->setGSkins(mpe->getSkins()[playerInput]);
@@ -308,12 +303,7 @@ void Story::_showMPE(MakeProtagonistEvent* mpe)
     std::cout << "Select your face: " << std::endl;
     for (int i = 0; i < mpe->getFaces().size(); i++) {
         buff = this->_findImageById(mpe->getFaces()[i][0]);
-        if (buff != nullptr) {
-            std::cout << "[" << i << "] " << buff->getName() << std::endl;
-        }
-        else {
-            std::cout << "[" << i << "] cant find image with id: " << mpe->getFaces()[i][0] << std::endl;
-        }
+        std::cout << "[" << i << "] " << this->_tryGetName(buff, mpe->getFaces()[i][0]) << std::endl;
     }
     std::cin >> playerInput;
     this->_getPlayer()->setGFaces(mpe->getFaces()[playerInput]);
@@ -321,12 +311,7 @@ void Story::_showMPE(MakeProtagonistEvent* mpe)
     std::cout << "Select your hair color: " << std::endl;
     for (int i = 0; i < mpe->getHairs().size(); i++) {
         buff = this->_findImageById(mpe->getHairs()[i][0]);
-        if (buff != nullptr) {
-            std::cout << "[" << i << "] " << buff->getName() << std::endl;
-        }
-        else {
-            std::cout << "[" << i << "] cant find image with id: " << mpe->getHairs()[i][0] << std::endl;
-        }
+        std::cout << "[" << i << "] " << this->_tryGetName(buff, mpe->getHairs()[i][0]) << std::endl;
     }
     std::cin >> playerInput;
     this->_getPlayer()->setGHairs(mpe->getHairs()[playerInput]);
@@ -346,12 +331,7 @@ void Story::_showCCE(ChooseClothesEvent* cce)
     std::cout << cce->getText() << std::endl;
     for (int i = 0; i < cce->getClothes().size(); i++) {
         buff = this->_findImageById(cce->getClothes()[i][0]);
-        if (buff != nullptr) {
-            std::cout << "[" << i << "] " << buff->getName() << std::endl;
-        }
-        else {
-            std::cout << "[" << i << "] cant find image with id: " << cce->getClothes()[i][0] << std::endl;
-        }
+        std::cout << "[" << i << "] " << this->_tryGetName(buff, cce->getClothes()[i][0]) << std::endl;
     }
     int playerInput = 0;
     std::cin >> playerInput;
@@ -360,12 +340,7 @@ void Story::_showCCE(ChooseClothesEvent* cce)
     std::cout << "Player clothes: " << std::endl;
     for (int i = 0; i < this->_getPlayer()->getGClothes().size(); i++) {
         buff = this->_findImageById(this->_getPlayer()->getGClothes()[i]);
-        if (buff != nullptr) {
-            std::cout << buff->getName() << std::endl;
-        }
-        else {
-            std::cout << "cant find image with id: " << this->_getPlayer()->getGClothes()[i] << std::endl;
-        }
+        std::cout << this->_tryGetName(buff, this->_getPlayer()->getGClothes()[i]) << std::endl;
     }
     std::cout << std::endl;
     system("pause");
@@ -380,42 +355,43 @@ void Story::_printInfoAboutPlayer()
 
     std::cout << std::endl;
     std::cout << "Name: " << this->_getPlayer()->getName() << std::endl;
-
-    if (skin != nullptr) {
-        std::cout << "Current skin: " << skin->getName() << std::endl;
-    }
-    else {
-        std::cout << "Current skin: not found image with id: " << this->_getPlayer()->getGSkins()[id] << std::endl;
-    }
-
-    if (face != nullptr) {
-        std::cout << "Current face: " << face->getName() << std::endl;
-    }
-    else {
-        std::cout << "Current face: not found image with id: " << this->_getPlayer()->getGFaces()[id] << std::endl;
-    }
-
-    if (hairs != nullptr) {
-        std::cout << "Current hairs: " << hairs->getName() << std::endl;
-    }
-    else {
-        std::cout << "Current hairs: not found image with id: " << this->_getPlayer()->getGHairs()[id] << std::endl;
-    }
+    std::cout << "Current skin: " << this->_tryGetName(skin, this->_getPlayer()->getGSkins()[id]) << std::endl;
+    std::cout << "Current face: " << this->_tryGetName(face, this->_getPlayer()->getGFaces()[id]) << std::endl;
+    std::cout << "Current hairs: " << this->_tryGetName(hairs, this->_getPlayer()->getGHairs()[id]) << std::endl;
     
     if (!this->_getPlayer()->getGClothes().empty()) {
         Image* clothes = this->_findImageById(this->_getPlayer()->getGClothes()[id]);
-        if (clothes != nullptr) {
-            std::cout << "Current clothes: " << clothes->getName() << std::endl;
-        }
-        else {
-            std::cout << "Current clothes: not found image with id: " << this->_getPlayer()->getGClothes()[id] << std::endl;
-        }   
+        std::cout << "Current clothes: " << this->_tryGetName(clothes, this->_getPlayer()->getGClothes()[id]) << std::endl;
     }
     else {
         std::cout << "Current clothes - not set" << std::endl;
     }
 
     std::cout << std::endl;
+}
+
+std::string Story::_tryGetName(Image* x, int id)
+{
+    if (x != nullptr) {
+        return x->getName();
+    }
+    return "Cant find image with id: " + std::to_string(id);
+}
+
+std::string Story::_tryGetName(Music* x, int id)
+{
+    if (x != nullptr) {
+        return x->getName();
+    }
+    return "Cant find music with id: " + std::to_string(id);
+}
+
+std::string Story::_tryGetName(Sfx* x, int id)
+{
+    if (x != nullptr) {
+        return x->getName();
+    }
+    return "Cant find sfx with id: " + std::to_string(id);
 }
 
 void Story::_setName(std::string name)

@@ -79,7 +79,10 @@ private:
 	void _showMPE(MakeProtagonistEvent* mpe);
 	void _showCCE(ChooseClothesEvent* cce);
 	void _printInfoAboutPlayer();
-
+	std::string _tryGetName(Image* x, int id);
+	std::string _tryGetName(Music* x, int id);
+	std::string _tryGetName(Sfx* x, int id);
+	
 	void _setName(std::string name);
 	void _setInfo(std::string info);
 	void _setAuthor(std::string author);
