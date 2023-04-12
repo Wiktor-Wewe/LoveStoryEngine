@@ -15,8 +15,11 @@
 class Story
 {
 public:
-	Story(std::fstream* file = nullptr)
+	Story(SDL_Window* window, SDL_Renderer* renderer, std::fstream* file = nullptr)
 	{
+		this->_window = window;
+		this->_renderer = renderer;
+
 		this->_name = std::string();
 		this->_info = std::string();
 		this->_author = std::string();
@@ -43,7 +46,6 @@ public:
 	std::string getDate();
 
 	int loadStory(std::fstream* file);
-	int init(SDL_Window* window, SDL_Renderer* renderer);
 	int play();
 
 private:

@@ -46,3 +46,21 @@ bool Image::getTextureStatus()
 {
 	return this->_textureStatus;
 }
+
+void Image::draw(int x, int y)
+{
+	if (this->_surfaceStatus) {
+		this->_dest_rect = { x, y, this->_surface->w, this->_surface->h };
+		if (this->_textureStatus) {
+			SDL_RenderCopy(this->_renderer, this->_texture, NULL, &this->_dest_rect);
+		}
+		else {
+			std::cout << "Image id: " << std::to_string(this->_id);
+			std::cout << " texture status: false" << std::endl;
+		}
+	}
+	else {
+		std::cout << "Image id: " << std::to_string(this->_id);
+		std::cout << " surface status: false" << std::endl;
+	}
+}

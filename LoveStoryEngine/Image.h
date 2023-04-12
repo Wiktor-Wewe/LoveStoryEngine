@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <iostream>
 #include <SDL.h>
 
 class Image
@@ -26,6 +27,7 @@ public:
 	std::string getPath();
 	bool getSurfaceStatus();
 	bool getTextureStatus();
+	void draw(int x, int y);
 
 private:
 	int _id;
@@ -35,6 +37,7 @@ private:
 	SDL_Renderer* _renderer;
 	SDL_Surface* _surface;
 	SDL_Texture* _texture;
+	SDL_Rect _dest_rect;
 	bool _surfaceStatus;
 	bool _textureStatus;
 

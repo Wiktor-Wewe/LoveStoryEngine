@@ -58,13 +58,6 @@ int Story::loadStory(std::fstream* file)
     return 0;
 }
 
-int Story::init(SDL_Window* window, SDL_Renderer* renderer)
-{
-    this->_window = window;
-    this->_renderer = renderer;
-    return 0;
-}
-
 int Story::play()
 {
     Message* currentMessage = this->_findMessageById(1);
