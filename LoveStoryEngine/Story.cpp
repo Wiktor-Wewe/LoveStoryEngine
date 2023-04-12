@@ -239,6 +239,12 @@ void Story::_showMessage(Message* m)
     Music* music = nullptr;
     Sfx* sfx = nullptr;
 
+    //
+    SDL_RenderClear(this->_renderer);
+    this->_Images[0].draw(0, 0);
+    SDL_RenderPresent(this->_renderer);
+    //
+
     std::cout << "id: " << m->getId() << std::endl;
     std::cout << "characters name: " << this->_tryGetName(character, m->getCharacterId()) << std::endl;
     std::cout << "musics: "; 
@@ -809,6 +815,9 @@ void Story::_loadMessages(std::fstream* file)
     uint16_t messageY = 0x0000;
     uint16_t characterX = 0x0000;
     uint16_t characterY = 0x0000;
+    uint16_t numberOfShowCharacters = 0x0000;
+    uint16_t showCharacter;
+    std::vector<int> showCharacters;
 
     file->read(reinterpret_cast<char*>(&numberOfMessages), sizeof(uint16_t));
     for (short i = 0; i < numberOfMessages; i++) {
@@ -838,13 +847,19 @@ void Story::_loadMessages(std::fstream* file)
         file->read(reinterpret_cast<char*>(&messageY), sizeof(uint16_t));
         file->read(reinterpret_cast<char*>(&characterX), sizeof(uint16_t));
         file->read(reinterpret_cast<char*>(&characterY), sizeof(uint16_t));
+        file->read(reinterpret_cast<char*>(&numberOfShowCharacters), sizeof(uint16_t));
+        for (short j = 0; j < numberOfShowCharacters; j++) {
+            file->read(reinterpret_cast<char*>(&showCharacter), sizeof(uint16_t));
+            showCharacters.push_back(showCharacter);
+        }
 
         this->_Messages.push_back(Message(buffId, characterId, strText, musics, sfxs, spriteId, 
             animationId, clothesId, bgImageId, nextMessageId, nextEventId, messageX, messageY,
-            characterX, characterY));
+            characterX, characterY, showCharacters));
 
         musics.clear();
         sfxs.clear();
+        showCharacters.clear();
     }
 }
 

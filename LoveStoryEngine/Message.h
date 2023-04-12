@@ -7,7 +7,7 @@ class Message
 public:
 	Message(int id, int characterId, std::string text, std::vector<int> musicId, std::vector<int> sfxId,
 		int spriteId, int animationId, int clothesId, int bgImageId, int nextMessage, int nextEvent,
-		int messageX, int messageY, int characterX, int characterY)
+		int messageX, int messageY, int characterX, int characterY, std::vector<int> showCharacters)
 	{
 		this->_id = id;
 		this->_characterId = characterId;
@@ -24,6 +24,7 @@ public:
 		this->_messageY = messageY;
 		this->_characterX = characterX;
 		this->_characterY = characterY;
+		this->_showCharacters = showCharacters;
 	}
 	int getId();
 	int getCharacterId();
@@ -40,6 +41,7 @@ public:
 	int getMessageY();
 	int getCharacterX();
 	int getCharacterY();
+	std::vector<int> getShowCharacters();
 
 private:
 	int _id;
@@ -57,5 +59,6 @@ private:
 	int _messageY;
 	int _characterX;
 	int _characterY;
+	std::vector<int> _showCharacters;
 };
 

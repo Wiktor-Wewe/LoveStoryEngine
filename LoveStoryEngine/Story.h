@@ -15,9 +15,8 @@
 class Story
 {
 public:
-	Story(SDL_Window* window, SDL_Renderer* renderer, std::fstream* file = nullptr)
+	Story(SDL_Renderer* renderer, std::fstream* file = nullptr)
 	{
-		this->_window = window;
 		this->_renderer = renderer;
 
 		this->_name = std::string();
@@ -113,7 +112,6 @@ private:
 	void _wipeStrBuff(char* buff, int size);
 
 	// play
-	SDL_Window* _window;
 	SDL_Renderer* _renderer;
 };
 

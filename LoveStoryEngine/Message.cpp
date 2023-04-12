@@ -74,3 +74,8 @@ int Message::getCharacterY()
 {
 	return this->_characterY;
 }
+
+std::vector<int> Message::getShowCharacters()
+{
+	return this->_showCharacters;
+}
