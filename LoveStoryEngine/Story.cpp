@@ -239,12 +239,6 @@ void Story::_showMessage(Message* m)
     Music* music = nullptr;
     Sfx* sfx = nullptr;
 
-    //
-    SDL_RenderClear(this->_renderer);
-    this->_Images[0].draw(0, 0);
-    SDL_RenderPresent(this->_renderer);
-    //
-
     std::cout << "id: " << m->getId() << std::endl;
     std::cout << "characters name: " << this->_tryGetName(character, m->getCharacterId()) << std::endl;
     std::cout << "musics: "; 
@@ -280,6 +274,24 @@ void Story::_showMessage(Message* m)
     std::cout << "character x: " << m->getCharacterX() << std::endl;
     std::cout << "character y: " << m->getCharacterY() << std::endl;
     std::cout << std::endl;
+
+    //draw
+    SDL_RenderClear(this->_renderer);
+    for (int i = 0; i < m->getShowCharacters().size(); i++) {
+        Image* characterBuff = this->_findImageById(m->getShowCharacters()[i]);
+        if (characterBuff) {
+            characterBuff->draw(0, 0);
+        }
+        else {
+            std::cout << "image with id: " << std::to_string(m->getShowCharacters()[i]);
+            std::cout << " not found!" << std::endl;
+        }
+        if (this->_font == NULL) {
+            std::cout << "Cant load font!" << std::endl;
+        }
+    }
+    m->draw();
+    SDL_RenderPresent(this->_renderer);
 
     std::cout << "message: " << std::endl;
     std::cout << m->getText() << std::endl;
@@ -855,7 +867,7 @@ void Story::_loadMessages(std::fstream* file)
 
         this->_Messages.push_back(Message(buffId, characterId, strText, musics, sfxs, spriteId, 
             animationId, clothesId, bgImageId, nextMessageId, nextEventId, messageX, messageY,
-            characterX, characterY, showCharacters));
+            characterX, characterY, showCharacters, this->_renderer, this->_font));
 
         musics.clear();
         sfxs.clear();

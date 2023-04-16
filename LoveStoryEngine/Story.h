@@ -18,6 +18,7 @@ public:
 	Story(SDL_Renderer* renderer, std::fstream* file = nullptr)
 	{
 		this->_renderer = renderer;
+		this->_font = TTF_OpenFont("arial.ttf", 28);
 
 		this->_name = std::string();
 		this->_info = std::string();
@@ -113,5 +114,6 @@ private:
 
 	// play
 	SDL_Renderer* _renderer;
+	TTF_Font* _font;
 };
 

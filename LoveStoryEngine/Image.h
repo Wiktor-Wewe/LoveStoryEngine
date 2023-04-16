@@ -2,19 +2,17 @@
 #include <string>
 #include <iostream>
 #include <SDL.h>
+#include <SDL_image.h>
 
 class Image
 {
 public:
 	Image(int id, std::string name, std::string path, SDL_Renderer* renderer)
 	{
-		this->_id = id;
+		this->_id = id; //500 - 600 reserved for base images
 		this->_name = name;
 		this->_path = path;
 		this->_renderer = renderer;
-
-		this->_surface = nullptr;
-		this->_texture = nullptr;
 
 		this->_surfaceStatus = this->_loadSurface();
 		this->_textureStatus = false;

@@ -17,7 +17,7 @@ std::string Image::getPath()
 
 bool Image::_loadSurface()
 {
-	this->_surface = SDL_LoadBMP(this->_path.c_str());
+	this->_surface = IMG_Load(this->_path.c_str());
 	if (this->_surface == NULL)
 	{
 		printf("Unable to load image! SDL_Error: %s\n", SDL_GetError());
