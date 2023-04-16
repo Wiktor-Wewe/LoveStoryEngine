@@ -25,7 +25,7 @@ int main(int argc, char* args[])
     SDL_Window* window = SDL_CreateWindow("Love Story Engine 1.1v", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 640, 480, SDL_WINDOW_SHOWN);
     SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 
-    std::fstream file("script2.wesc", std::ios::in | std::ios::binary);
+    std::fstream file("script_test.wesc", std::ios::in | std::ios::binary);
     if (file.good()) {
         Story s(renderer, &file);
         s.play();

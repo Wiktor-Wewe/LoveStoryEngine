@@ -275,15 +275,27 @@ void Story::_showMessage(Message* m)
     std::cout << "character y: " << m->getCharacterY() << std::endl;
     std::cout << std::endl;
 
+    Character* currentCharacter = this->_findCharacterById(m->getCharacterId());
+    currentCharacter->setCurrentSprite(m->getSpriteId());
+    currentCharacter->setX(m->getCharacterX());
+    currentCharacter->setY(m->getCharacterY());
+
     //draw
     SDL_RenderClear(this->_renderer);
     for (int i = 0; i < m->getShowCharacters().size(); i++) {
-        Image* characterBuff = this->_findImageById(m->getShowCharacters()[i]);
+        Character* characterBuff = this->_findCharacterById(m->getShowCharacters()[i]);
         if (characterBuff) {
-            characterBuff->draw(0, 0);
+            Image* characterSpriteBuff = this->_findImageById(characterBuff->getCurrentSprite());
+            if (characterSpriteBuff) {
+                characterSpriteBuff->draw(characterBuff->getX(), characterBuff->getY());
+            }
+            else {
+                std::cout << "image with id: " << std::to_string(characterBuff->getCurrentSprite());
+                std::cout << " not found!" << std::endl;
+            }
         }
         else {
-            std::cout << "image with id: " << std::to_string(m->getShowCharacters()[i]);
+            std::cout << "character with id: " << std::to_string(m->getShowCharacters()[i]);
             std::cout << " not found!" << std::endl;
         }
         if (this->_font == NULL) {
@@ -465,6 +477,11 @@ void Story::_setAuthor(std::string author)
 void Story::_setDate(std::string date)
 {
     this->_date = date;
+}
+
+bool Story::loadBase()
+{
+    //load base - default elements as images etc
 }
 
 bool Story::_isHeaderOkay(std::fstream* file)

@@ -94,6 +94,7 @@ void Message::draw()
 {
 	if (this->_surfaceStatus) {
 		this->_dest_rect = { this->_messageX, this->_messageY, this->_surface->w, this->_surface->h };
+		//this->_dest_rect = { 75, 350, this->_surface->w, this->_surface->h };
 		if (this->_textureStatus) {
 			SDL_RenderCopy(this->_renderer, this->_texture, NULL, &this->_dest_rect);
 		}

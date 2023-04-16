@@ -18,7 +18,7 @@ public:
 	Story(SDL_Renderer* renderer, std::fstream* file = nullptr)
 	{
 		this->_renderer = renderer;
-		this->_font = TTF_OpenFont("arial.ttf", 28);
+		this->_font = TTF_OpenFont("arial.ttf", 20);
 
 		this->_name = std::string();
 		this->_info = std::string();
@@ -35,7 +35,7 @@ public:
 		this->_Player = (Protagonist*)malloc(sizeof(Protagonist));
 		this->_Sfxs = std::vector<Sfx>();
 
-		if (file != nullptr) {
+		if (this->loadBase() && file != nullptr) {
 			this->loadStory(file);
 		}
 	}
@@ -94,6 +94,8 @@ private:
 	void _setDate(std::string date);
 
 	// load
+	bool loadBase(); //load base-default elements as images etc
+
 	bool _isHeaderOkay(std::fstream* file);
 	bool _isSizeOkay(std::fstream* file);
 	void _loadGlobalInfo(std::fstream* file);
