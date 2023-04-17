@@ -302,6 +302,9 @@ void Story::_showMessage(Message* m)
             std::cout << "Cant load font!" << std::endl;
         }
     }
+    Image* base = this->_findImageById(500);
+    base->draw(0, 0);
+    m->drawName();
     m->draw();
     SDL_RenderPresent(this->_renderer);
 
@@ -481,7 +484,38 @@ void Story::_setDate(std::string date)
 
 bool Story::loadBase()
 {
-    //load base - default elements as images etc
+    std::string buff;
+    std::vector<std::string> list;
+    std::fstream file("base.list", std::ios::in);
+
+    if (!file.good()) {
+        return false;
+    }
+
+    while (!file.eof()) {
+        std::getline(file, buff);
+        if (!buff.empty()) {
+            list.push_back(buff);
+        }
+    }
+    file.close();
+
+    int index = 500;
+    for (int i = 0; i < list.size(); i++) {
+        char type = list[i][0];
+        if (type == 'I') {
+            this->_Images.push_back(Image(index, "BASE" + std::to_string(index), list[i].substr(2), this->_renderer));
+        }
+        else if (type == 'M') {
+            this->_Musics.push_back(Music(index, "BASE" + std::to_string(index), list[i].substr(2)));
+        }
+        else if (type == 'S') {
+            this->_Sfxs.push_back(Sfx(index, "BASE" + std::to_string(index), list[i].substr(2)));
+        }
+        index++;
+    }
+
+    return true;
 }
 
 bool Story::_isHeaderOkay(std::fstream* file)
@@ -882,9 +916,10 @@ void Story::_loadMessages(std::fstream* file)
             showCharacters.push_back(showCharacter);
         }
 
+        Character* character = this->_findCharacterById(characterId);
         this->_Messages.push_back(Message(buffId, characterId, strText, musics, sfxs, spriteId, 
             animationId, clothesId, bgImageId, nextMessageId, nextEventId, messageX, messageY,
-            characterX, characterY, showCharacters, this->_renderer, this->_font));
+            characterX, characterY, showCharacters, this->_renderer, this->_font, character->getName()));
 
         musics.clear();
         sfxs.clear();

@@ -10,7 +10,7 @@ public:
 	Message(int id, int characterId, std::string text, std::vector<int> musicId, std::vector<int> sfxId,
 		int spriteId, int animationId, int clothesId, int bgImageId, int nextMessage, int nextEvent,
 		int messageX, int messageY, int characterX, int characterY, std::vector<int> showCharacters, 
-		SDL_Renderer* renderer, TTF_Font* font)
+		SDL_Renderer* renderer, TTF_Font* font, std::string name)
 	{
 		this->_id = id;
 		this->_characterId = characterId;
@@ -30,6 +30,12 @@ public:
 		this->_showCharacters = showCharacters;
 		this->_renderer = renderer;
 		this->_font = font;
+
+		this->_surfaceStatusName = this->_loadSurfaceName(name);
+		this->_textureStatusName = false;
+		if (this->_surfaceStatusName) {
+			this->_textureStatusName = this->_loadTextureName();
+		}
 
 		this->_surfaceStatus = this->_loadSurface();
 		this->_textureStatus = false;
@@ -56,6 +62,7 @@ public:
 	bool getSurfaceStatus();
 	bool getTextureStatus();
 	void draw();
+	void drawName();
 
 private:
 	int _id;
@@ -77,14 +84,28 @@ private:
 
 	// sdl
 	SDL_Renderer* _renderer;
+
 	SDL_Surface* _surface;
+	SDL_Surface* _surfaceName;
+	
 	SDL_Texture* _texture;
+	SDL_Texture* _textureName;
+	
 	TTF_Font* _font;
-	SDL_Rect _dest_rect;
+	
+	SDL_Rect _destRect;
+	SDL_Rect _destRectName;
+	
 	bool _surfaceStatus;
+	bool _surfaceStatusName;
+	
 	bool _textureStatus;
+	bool _textureStatusName;
 
 	bool _loadSurface();
+	bool _loadSurfaceName(std::string name);
+
 	bool _loadTexture();
+	bool _loadTextureName();
 };
 
