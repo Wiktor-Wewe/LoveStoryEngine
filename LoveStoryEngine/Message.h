@@ -7,7 +7,7 @@
 class Message
 {
 public:
-	Message(int id, int characterId, std::string text, std::vector<int> musicId, std::vector<int> sfxId,
+	Message(int id, int characterId, std::string text, int musicId, std::vector<int> sfxId,
 		int spriteId, int animationId, int clothesId, int bgImageId, int nextMessage, int nextEvent,
 		int messageX, int messageY, int characterX, int characterY, std::vector<int> showCharacters, 
 		SDL_Renderer* renderer, TTF_Font* font, std::string name)
@@ -46,7 +46,7 @@ public:
 	int getId();
 	int getCharacterId();
 	std::string getText();
-	std::vector<int> getAllMusicId();
+	int getMusicId();
 	std::vector<int> getAllSfxId();
 	int getSpriteId();
 	int getAnimationId();
@@ -68,7 +68,7 @@ private:
 	int _id;
 	int _characterId; // 0 = none, 1 = protagonist, >1 = characters
 	std::string _text;
-	std::vector<int> _musicId;
+	int _musicId;
 	std::vector<int> _sfxId;
 	int _spriteId;
 	int _animationId;

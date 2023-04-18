@@ -14,6 +14,8 @@ public:
 		this->_gFaces = std::vector<int>();
 		this->_gHairs = std::vector<int>();
 		this->_gClothes = std::vector<int>();
+		this->_x = 0;
+		this->_y = 0;
 	}
 	void setName(std::string name);
 	void setGSkins(std::vector<int> gskins);
@@ -21,6 +23,9 @@ public:
 	void setGHairs(std::vector<int> ghairs);
 	void setGClothes(std::vector<int> glothes);
 	void setSpriteId(int id);
+	void setX(int x);
+	void setY(int y);
+
 
 	std::string getName();
 	std::vector<int> getGSkins();
@@ -28,6 +33,8 @@ public:
 	std::vector<int> getGHairs();
 	std::vector<int> getGClothes();
 	int getCurrentSpriteId();
+	int getX();
+	int getY();
 
 private:
 	std::string _name;
@@ -37,5 +44,7 @@ private:
 	std::vector<int> _gClothes;
 	std::vector<int> _gHairs;
 	int _currentSpriteId;
+	int _x;
+	int _y;
 };
 

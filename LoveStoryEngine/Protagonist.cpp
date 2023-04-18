@@ -31,6 +31,16 @@ void Protagonist::setSpriteId(int id)
 	this->_currentSpriteId = id;
 }
 
+void Protagonist::setX(int x)
+{
+	this->_x = x;
+}
+
+void Protagonist::setY(int y)
+{
+	this->_y = y;
+}
+
 std::string Protagonist::getName()
 {
 	return this->_name;
@@ -59,4 +69,14 @@ std::vector<int> Protagonist::getGClothes()
 int Protagonist::getCurrentSpriteId()
 {
 	return this->_currentSpriteId;
+}
+
+int Protagonist::getX()
+{
+	return this->_x;
+}
+
+int Protagonist::getY()
+{
+	return this->_y;
 }

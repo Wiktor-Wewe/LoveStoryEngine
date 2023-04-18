@@ -11,12 +11,14 @@ public:
 		this->_path = path;
 
 		this->_musicStatus = this->_loadMusic(path.c_str());
+		this->_isPlaying = false;
 	}
 	int getId();
 	std::string getName();
 	std::string getPath();
 
 	bool getMusicStatus();
+	bool isPlaying();
 	void play();
 	void stop();
 
@@ -28,5 +30,6 @@ private:
 	Mix_Music* _music;
 	bool _loadMusic(const char* filename);
 	bool _musicStatus;
+	bool _isPlaying;
 };
 

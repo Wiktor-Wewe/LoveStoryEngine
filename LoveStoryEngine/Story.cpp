@@ -241,17 +241,7 @@ void Story::_showMessage(Message* m)
 
     std::cout << "id: " << m->getId() << std::endl;
     std::cout << "characters name: " << this->_tryGetName(character, m->getCharacterId()) << std::endl;
-    std::cout << "musics: "; 
-    for (int i = 0; i < m->getAllMusicId().size(); i++) {
-        music = this->_findMusicById(m->getAllMusicId()[i]);
-        std::cout << this->_tryGetName(music, m->getAllMusicId()[i]);
-        if (i == m->getAllMusicId().size() - 1) {
-            std::cout << std::endl;
-        }
-        else {
-            std::cout << ", ";
-        }
-    }
+    std::cout << "musics: " << this->_tryGetName(this->_findMusicById(m->getMusicId()), m->getMusicId()) << std::endl;
     std::cout << "sfxs: ";
     for (int i = 0; i < m->getAllSfxId().size(); i++) {
         sfx = this->_findSfxById(m->getAllSfxId()[i]);
@@ -275,14 +265,33 @@ void Story::_showMessage(Message* m)
     std::cout << "character y: " << m->getCharacterY() << std::endl;
     std::cout << std::endl;
 
-    Character* currentCharacter = this->_findCharacterById(m->getCharacterId());
-    currentCharacter->setCurrentSprite(m->getSpriteId());
-    currentCharacter->setX(m->getCharacterX());
-    currentCharacter->setY(m->getCharacterY());
+    if (m->getCharacterId() != 0 && m->getClothesId() != 1) {
+        Character* currentCharacter = this->_findCharacterById(m->getCharacterId());
+        currentCharacter->setCurrentSprite(m->getSpriteId());
+        currentCharacter->setX(m->getCharacterX());
+        currentCharacter->setY(m->getCharacterY());
+    }
+    else if (m->getCharacterId() == 1) {
+        this->_getPlayer()->setSpriteId(m->getSpriteId());
+        this->_getPlayer()->setX(m->getCharacterX());
+        this->_getPlayer()->setY(m->getCharacterY());
+    }
 
     //draw
-    SDL_RenderClear(this->_renderer);
+    SDL_RenderClear(this->_renderer); // to chyba do wyjebania
+    
+    Image* bgimage = this->_findImageById(m->getBgImageId());
+    if (bgimage) {
+        bgimage->draw(0, 0);
+    }
+    else {
+        this->_findImageById(501)->draw(0, 0);
+    }
+
     for (int i = 0; i < m->getShowCharacters().size(); i++) {
+        if (m->getShowCharacters()[i] == 1) {
+            this->_findImageById(this->_getPlayer()->getCurrentSpriteId())->draw(this->_getPlayer()->getX(), this->_getPlayer()->getY());
+        }
         Character* characterBuff = this->_findCharacterById(m->getShowCharacters()[i]);
         if (characterBuff) {
             Image* characterSpriteBuff = this->_findImageById(characterBuff->getCurrentSprite());
@@ -306,7 +315,14 @@ void Story::_showMessage(Message* m)
     base->draw(0, 0);
     m->drawName();
     m->draw();
-    SDL_RenderPresent(this->_renderer);
+
+    SDL_RenderPresent(this->_renderer); // to chyba do wyjebania
+    
+    // play music
+    // todo
+    // 
+    // play sfx
+    // todo
 
     std::cout << "message: " << std::endl;
     std::cout << m->getText() << std::endl;
@@ -862,9 +878,7 @@ void Story::_loadMessages(std::fstream* file)
     char text[0xff];
     this->_wipeStrBuff(text, 0xff);
     std::string strText;
-    uint16_t numberOfMusicsId = 0x0000;
     uint16_t musicId = 0x0000;
-    std::vector<int> musics;
     uint16_t numberOfSfxId = 0x0000;
     uint16_t sfxId = 0x0000;
     std::vector<int> sfxs;
@@ -890,11 +904,7 @@ void Story::_loadMessages(std::fstream* file)
         file->read(text, sizeOfText);
         strText = text;
         this->_wipeStrBuff(text);
-        file->read(reinterpret_cast<char*>(&numberOfMusicsId), sizeof(uint16_t));
-        for (short j = 0; j < numberOfMusicsId; j++) {
-            file->read(reinterpret_cast<char*>(&musicId), sizeof(uint16_t));
-            musics.push_back(musicId);
-        }
+        file->read(reinterpret_cast<char*>(&musicId), sizeof(uint16_t));
         file->read(reinterpret_cast<char*>(&numberOfSfxId), sizeof(uint16_t));
         for (short j = 0; j < numberOfSfxId; j++) {
             file->read(reinterpret_cast<char*>(&sfxId), sizeof(uint16_t));
@@ -917,11 +927,10 @@ void Story::_loadMessages(std::fstream* file)
         }
 
         Character* character = this->_findCharacterById(characterId);
-        this->_Messages.push_back(Message(buffId, characterId, strText, musics, sfxs, spriteId, 
+        this->_Messages.push_back(Message(buffId, characterId, strText, musicId, sfxs, spriteId, 
             animationId, clothesId, bgImageId, nextMessageId, nextEventId, messageX, messageY,
             characterX, characterY, showCharacters, this->_renderer, this->_font, character->getName()));
 
-        musics.clear();
         sfxs.clear();
         showCharacters.clear();
     }

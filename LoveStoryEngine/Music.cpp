@@ -20,14 +20,21 @@ bool Music::getMusicStatus()
     return this->_musicStatus;
 }
 
+bool Music::isPlaying()
+{
+    return this->_isPlaying;
+}
+
 void Music::play()
 {
     Mix_PlayMusic(this->_music, -1);
+    this->_isPlaying = true;
 }
 
 void Music::stop()
 {
     Mix_HaltMusic();
+    this->_isPlaying = false;
 }
 
 bool Music::_loadMusic(const char* filename)

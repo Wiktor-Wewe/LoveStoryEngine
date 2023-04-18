@@ -15,7 +15,7 @@ std::string Message::getText()
 	return this->_text;
 }
 
-std::vector<int> Message::getAllMusicId()
+int Message::getMusicId()
 {
 	return this->_musicId;
 }
