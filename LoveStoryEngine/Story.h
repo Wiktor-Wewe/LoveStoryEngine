@@ -34,6 +34,7 @@ public:
 		this->_Musics = std::vector<Music>();
 		this->_Player = (Protagonist*)malloc(sizeof(Protagonist));
 		this->_Sfxs = std::vector<Sfx>();
+		this->_currentMusicId = 0;
 
 		if (this->loadBase() && file != nullptr) {
 			this->loadStory(file);
@@ -117,5 +118,6 @@ private:
 	// play
 	SDL_Renderer* _renderer;
 	TTF_Font* _font;
+	int _currentMusicId;
 };
 

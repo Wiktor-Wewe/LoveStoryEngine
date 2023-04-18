@@ -319,8 +319,24 @@ void Story::_showMessage(Message* m)
     SDL_RenderPresent(this->_renderer); // to chyba do wyjebania
     
     // play music
-    // todo
-    // 
+    music = this->_findMusicById(m->getMusicId());
+    if (music != nullptr) {
+        if (this->_currentMusicId != m->getMusicId()) {
+            music->play();
+        }
+        else {
+            music->stop();
+            music->play();
+        }
+    }
+    else {
+        std::cout << "music with id: " << std::to_string(m->getMusicId());
+        std::cout << " not found!" << std::endl;
+    }
+    this->_currentMusicId = m->getMusicId();
+
+
+    
     // play sfx
     // todo
 
