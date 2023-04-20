@@ -60,28 +60,50 @@ int Story::loadStory(std::fstream* file)
 
 int Story::play()
 {
+
     Message* currentMessage = this->_findMessageById(1);
     if (currentMessage) {
         ChooseClothesEvent* currentCCE = nullptr;
         MakeProtagonistEvent* currentMPE = nullptr;
         Event* currentEvent = nullptr;
 
-        while (1)
+        SDL_Event event;
+        bool quit = false;
+        bool pass = true;
+
+        while (!quit)
         {
-            if (currentMessage) {
-                this->_clsAndShowInfo();
-                this->_showMessage(currentMessage);
-                int nextMessage = currentMessage->getNextMessage();
-
-                if (nextMessage != 0) {
-                    currentMessage = this->_findMessageById(nextMessage);
+            while (SDL_PollEvent(&event)) {
+                switch (event.type) {
+                case SDL_QUIT:
+                    quit = true;
+                    break;
+                case SDL_KEYDOWN:
+                    if (event.key.keysym.sym == SDLK_SPACE) {
+                        pass = true;
+                    }
+                    break;
                 }
-                else {
-                    int nextEvent = currentMessage->getNextEvent();
-                    currentMessage = nullptr;
+            }
 
-                    currentEvent = this->_findEventById(nextEvent);
+            if (pass) {
+                if (currentMessage) {
+                    this->_clsAndShowInfo();
+                    this->_scene->clear(); // <------ clear scene before handleMessage
+                    this->_handleMessage(currentMessage);
+                    int nextMessage = currentMessage->getNextMessage();
+
+                    if (nextMessage != 0) {
+                        currentMessage = this->_findMessageById(nextMessage);
+                    }
+                    else {
+                        int nextEvent = currentMessage->getNextEvent();
+                        currentMessage = nullptr;
+
+                        currentEvent = this->_findEventById(nextEvent);
+                    }
                 }
+                pass = false;
             }
             else if (currentEvent) {
                 this->_clsAndShowInfo();
@@ -127,9 +149,9 @@ int Story::play()
                 currentCCE = nullptr;
                 currentMessage = this->_findMessageById(nextMessageId);
             }
-            else {
-                return 0;
-            }
+            SDL_RenderClear(this->_renderer);
+            this->_scene->draw();
+            SDL_RenderPresent(this->_renderer);
         }
     }
     else {
@@ -232,13 +254,27 @@ void Story::_clsAndShowInfo()
     std::cout << this->_compilationInfo << "\n\n";
 }
 
-void Story::_showMessage(Message* m)
+void Story::_handleMessage(Message* m)
 {
+    this->_showMessageInfo(m);
+    this->_setCharacterPosition(m);
+    this->_playMusic(m);
+    // play sfx
+    this->_tryDrawImage(m->getBgImageId(), 0, 0); // draw bg image
+    this->_drawCharacters(m);
+    this->_tryDrawImage(500, 0, 0);
+    m->drawName();
+    m->draw();
+
+    //system("pause");
+}
+
+void Story::_showMessageInfo(Message* m)
+{
+
     Character* character = this->_findCharacterById(m->getCharacterId());
     Image* img = this->_findImageById(m->getBgImageId());
-    Music* music = nullptr;
     Sfx* sfx = nullptr;
-
     std::cout << "id: " << m->getId() << std::endl;
     std::cout << "characters name: " << this->_tryGetName(character, m->getCharacterId()) << std::endl;
     std::cout << "musics: " << this->_tryGetName(this->_findMusicById(m->getMusicId()), m->getMusicId()) << std::endl;
@@ -263,8 +299,16 @@ void Story::_showMessage(Message* m)
     std::cout << "message y: " << m->getMessageY() << std::endl;
     std::cout << "character x: " << m->getCharacterX() << std::endl;
     std::cout << "character y: " << m->getCharacterY() << std::endl;
+    std::cout << "message: " << std::endl;
+    std::cout << m->getText() << std::endl;
     std::cout << std::endl;
+    if (this->_font == NULL) {
+        std::cout << "Cant load font!" << std::endl;
+    }
+}
 
+void Story::_setCharacterPosition(Message* m)
+{
     if (m->getCharacterId() != 0 && m->getClothesId() != 1) {
         Character* currentCharacter = this->_findCharacterById(m->getCharacterId());
         currentCharacter->setCurrentSprite(m->getSpriteId());
@@ -276,73 +320,62 @@ void Story::_showMessage(Message* m)
         this->_getPlayer()->setX(m->getCharacterX());
         this->_getPlayer()->setY(m->getCharacterY());
     }
+}
 
-    //draw
-    SDL_RenderClear(this->_renderer); // to chyba do wyjebania
-    
-    Image* bgimage = this->_findImageById(m->getBgImageId());
-    if (bgimage) {
-        bgimage->draw(0, 0);
-    }
-    else {
-        this->_findImageById(501)->draw(0, 0);
-    }
-
-    for (int i = 0; i < m->getShowCharacters().size(); i++) {
-        if (m->getShowCharacters()[i] == 1) {
-            this->_findImageById(this->_getPlayer()->getCurrentSpriteId())->draw(this->_getPlayer()->getX(), this->_getPlayer()->getY());
-        }
-        Character* characterBuff = this->_findCharacterById(m->getShowCharacters()[i]);
-        if (characterBuff) {
-            Image* characterSpriteBuff = this->_findImageById(characterBuff->getCurrentSprite());
-            if (characterSpriteBuff) {
-                characterSpriteBuff->draw(characterBuff->getX(), characterBuff->getY());
-            }
-            else {
-                std::cout << "image with id: " << std::to_string(characterBuff->getCurrentSprite());
-                std::cout << " not found!" << std::endl;
-            }
-        }
-        else {
-            std::cout << "character with id: " << std::to_string(m->getShowCharacters()[i]);
-            std::cout << " not found!" << std::endl;
-        }
-        if (this->_font == NULL) {
-            std::cout << "Cant load font!" << std::endl;
-        }
-    }
-    Image* base = this->_findImageById(500);
-    base->draw(0, 0);
-    m->drawName();
-    m->draw();
-
-    SDL_RenderPresent(this->_renderer); // to chyba do wyjebania
-    
-    // play music
-    music = this->_findMusicById(m->getMusicId());
+void Story::_playMusic(Message* m)
+{
+    Music* music = this->_findMusicById(m->getMusicId());
     if (music != nullptr) {
         if (this->_currentMusicId != m->getMusicId()) {
-            music->play();
-        }
-        else {
             music->stop();
             music->play();
         }
     }
     else {
+        music->stop();
         std::cout << "music with id: " << std::to_string(m->getMusicId());
         std::cout << " not found!" << std::endl;
     }
     this->_currentMusicId = m->getMusicId();
+}
 
+void Story::_drawCharacters(Message* m)
+{
+    for (int i = 0; i < m->getShowCharacters().size(); i++) {
+        if (m->getShowCharacters()[i] == 1) {
+            int x = this->_getPlayer()->getX();
+            int y = this->_getPlayer()->getY();
+            this->_findImageById(this->_getPlayer()->getCurrentSpriteId())->draw(x, y);
+        }
 
-    
-    // play sfx
-    // todo
+        Character* character = this->_tryGetCharacter(m->getShowCharacters()[i]);
+        if (character) {
+            this->_tryDrawImage(character->getCurrentSprite(), character->getX(), character->getY());
+        }
+    }
+}
 
-    std::cout << "message: " << std::endl;
-    std::cout << m->getText() << std::endl;
-    system("pause");
+void Story::_tryDrawImage(int id, int x, int y)
+{
+    Image* image = this->_findImageById(id);
+    if (image != nullptr) {
+        //image->draw(x, y);
+        this->_scene->addImage(image, x, y);
+    }
+    else {
+        std::cout << "image with id: " << std::to_string(id);
+        std::cout << " not found!" << std::endl;
+    }
+}
+
+Character* Story::_tryGetCharacter(int id)
+{
+    Character* character = this->_findCharacterById(id);
+    if (character == nullptr) {
+        std::cout << "character with id: " << std::to_string(id);
+        std::cout << " not found!" << std::endl;
+    }
+    return character;
 }
 
 void Story::_showEvent(Event* e)

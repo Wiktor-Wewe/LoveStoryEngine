@@ -9,6 +9,7 @@
 #include "Music.h"
 #include "Protagonist.h"
 #include "Sfx.h"
+#include "Scene.h"
 #include <fstream>
 #include <iostream>
 
@@ -34,6 +35,7 @@ public:
 		this->_Musics = std::vector<Music>();
 		this->_Player = (Protagonist*)malloc(sizeof(Protagonist));
 		this->_Sfxs = std::vector<Sfx>();
+		this->_scene = new Scene(this->_renderer);
 		this->_currentMusicId = 0;
 
 		if (this->loadBase() && file != nullptr) {
@@ -66,7 +68,7 @@ private:
 	std::string _date;
 	std::string _compilationInfo;
 
-	// play
+	// base find and get
 	Event* _findEventById(int id);
 	Message* _findMessageById(int id);
 	MakeProtagonistEvent* _getMpei();
@@ -79,7 +81,16 @@ private:
 
 	// show
 	void _clsAndShowInfo();
-	void _showMessage(Message* m);
+
+	// message
+	void _handleMessage(Message* m);
+	void _showMessageInfo(Message* m);
+	void _setCharacterPosition(Message* m);
+	void _playMusic(Message* m);
+	void _drawCharacters(Message* m);
+	void _tryDrawImage(int id, int x, int y);
+	Character* _tryGetCharacter(int id);
+
 	void _showEvent(Event* e);
 	void _showMPE(MakeProtagonistEvent* mpe);
 	void _showCCE(ChooseClothesEvent* cce);
@@ -115,7 +126,8 @@ private:
 	void _wipeStrBuff(char* buff);
 	void _wipeStrBuff(char* buff, int size);
 
-	// play
+	// play variable
+	Scene* _scene;
 	SDL_Renderer* _renderer;
 	TTF_Font* _font;
 	int _currentMusicId;
