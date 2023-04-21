@@ -127,6 +127,7 @@ private:
 	void _wipeStrBuff(char* buff, int size);
 
 	// play variable
+	void searchNext(Message*& m, Event*& e, MakeProtagonistEvent*& mpe, ChooseClothesEvent*& cce);
 	Scene* _scene;
 	SDL_Renderer* _renderer;
 	TTF_Font* _font;

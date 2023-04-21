@@ -61,15 +61,18 @@ int Story::loadStory(std::fstream* file)
 int Story::play()
 {
 
-    Message* currentMessage = this->_findMessageById(1);
-    if (currentMessage) {
-        ChooseClothesEvent* currentCCE = nullptr;
-        MakeProtagonistEvent* currentMPE = nullptr;
-        Event* currentEvent = nullptr;
+    Message* m = this->_findMessageById(1);
+    if (m) {
+        ChooseClothesEvent* cce = nullptr;
+        MakeProtagonistEvent* mpe = nullptr;
+        Event* e = nullptr;
+
+        this->_scene->clear();
+        this->_handleMessage(m);
 
         SDL_Event event;
         bool quit = false;
-        bool pass = true;
+        bool pass = false;
 
         while (!quit)
         {
@@ -87,68 +90,15 @@ int Story::play()
             }
 
             if (pass) {
-                if (currentMessage) {
-                    this->_clsAndShowInfo();
-                    this->_scene->clear(); // <------ clear scene before handleMessage
-                    this->_handleMessage(currentMessage);
-                    int nextMessage = currentMessage->getNextMessage();
-
-                    if (nextMessage != 0) {
-                        currentMessage = this->_findMessageById(nextMessage);
-                    }
-                    else {
-                        int nextEvent = currentMessage->getNextEvent();
-                        currentMessage = nullptr;
-
-                        currentEvent = this->_findEventById(nextEvent);
-                    }
-                }
+                this->searchNext(m, e, mpe, cce);
                 pass = false;
-            }
-            else if (currentEvent) {
-                this->_clsAndShowInfo();
-                if (!currentEvent->getPlayerOptions().empty()) {
-                    this->_showEvent(currentEvent);
 
-                    int nextMessage;
-                    std::cin >> nextMessage;
-
-                    std::vector<int> nextMessages = currentEvent->getNextMessages();
-                    currentEvent = nullptr;
-                    currentMessage = this->_findMessageById(nextMessages[nextMessage]);
-                }
-                else {
-                    int mpei = currentEvent->getMpei();
-                    int ccei = currentEvent->getCcei();
-                    if (mpei != 0) {
-                        currentEvent = nullptr;
-                        currentMPE = this->_getMpei();
-                    }
-                    else if (ccei != 0) {
-                        currentEvent = nullptr;
-                        currentCCE = this->_findCceById(ccei);
-                    }
-                    else {
-                        std::cout << "cant find whats next" << std::endl;
-                    }
+                if (m) {
+                    this->_scene->clear();
+                    this->_handleMessage(m);
                 }
             }
-            else if (currentMPE) {
-                this->_clsAndShowInfo();
-                this->_showMPE(currentMPE);
 
-                int nextMessageId = currentMPE->getNextMessageId();
-                currentMessage = this->_findMessageById(nextMessageId);
-                currentMPE = nullptr;
-            }
-            else if (currentCCE) {
-                this->_clsAndShowInfo();
-                this->_showCCE(currentCCE);
-
-                int nextMessageId = currentCCE->getNextMessageId();
-                currentCCE = nullptr;
-                currentMessage = this->_findMessageById(nextMessageId);
-            }
             SDL_RenderClear(this->_renderer);
             this->_scene->draw();
             SDL_RenderPresent(this->_renderer);
@@ -263,8 +213,9 @@ void Story::_handleMessage(Message* m)
     this->_tryDrawImage(m->getBgImageId(), 0, 0); // draw bg image
     this->_drawCharacters(m);
     this->_tryDrawImage(500, 0, 0);
-    m->drawName();
-    m->draw();
+    
+    this->_scene->addRawImage(m->getNameTexture());
+    this->_scene->addRawImage(m->getTextTexture());
 
     //system("pause");
 }
@@ -1120,4 +1071,66 @@ void Story::_wipeStrBuff(char* buff)
 void Story::_wipeStrBuff(char* buff, int size)
 {
     memset(buff, 0, size);
+}
+
+void Story::searchNext(Message*& m, Event*& e, MakeProtagonistEvent*& mpe, ChooseClothesEvent*& cce)
+{
+    if (m) {
+        this->_clsAndShowInfo();
+        int nextMessage = m->getNextMessage();
+
+        if (nextMessage) {
+            m = this->_findMessageById(nextMessage);
+        }
+        else {
+            int nextEvent = m->getNextEvent();
+            m = nullptr;
+
+            e = this->_findEventById(nextEvent);
+        }
+    }
+    else if (e) {
+        this->_clsAndShowInfo();
+        if (!e->getPlayerOptions().empty()) {
+            this->_showEvent(e);
+
+            int nextMessage;
+            std::cin >> nextMessage;
+
+            std::vector<int> nextMessages = e->getNextMessages();
+            e = nullptr;
+            m = this->_findMessageById(nextMessages[nextMessage]);
+        }
+        else {
+            int mpei = e->getMpei();
+            int ccei = e->getCcei();
+            if (mpei != 0) {
+                e = nullptr;
+                mpe = this->_getMpei();
+            }
+            else if (ccei != 0) {
+                e = nullptr;
+                cce = this->_findCceById(ccei);
+            }
+            else {
+                std::cout << "cant find whats next" << std::endl;
+            }
+        }
+    }
+    else if (mpe) {
+        this->_clsAndShowInfo();
+        this->_showMPE(mpe);
+
+        int nextMessageId = mpe->getNextMessageId();
+        m = this->_findMessageById(nextMessageId);
+        mpe = nullptr;
+    }
+    else if (cce) {
+        this->_clsAndShowInfo();
+        this->_showCCE(cce);
+
+        int nextMessageId = cce->getNextMessageId();
+        cce = nullptr;
+        m = this->_findMessageById(nextMessageId);
+    }
 }

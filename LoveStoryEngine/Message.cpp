@@ -90,13 +90,17 @@ bool Message::getTextureStatus()
 	return this->_textureStatus;
 }
 
-void Message::draw()
+Message::rawimage Message::getTextTexture()
 {
 	if (this->_surfaceStatus) {
 		this->_destRect = { this->_messageX, this->_messageY, this->_surface->w, this->_surface->h };
 		//this->_dest_rect = { 75, 350, this->_surface->w, this->_surface->h };
 		if (this->_textureStatus) {
-			SDL_RenderCopy(this->_renderer, this->_texture, NULL, &this->_destRect);
+			rawimage x;
+			x.texture = _texture;
+			x.rect = &_destRect;
+			return x;
+			//SDL_RenderCopy(this->_renderer, this->_texture, NULL, &this->_destRect);
 		}
 		else {
 			std::cout << "Message id: " << std::to_string(this->_id);
@@ -109,12 +113,16 @@ void Message::draw()
 	}
 }
 
-void Message::drawName()
+Message::rawimage Message::getNameTexture()
 {
 	if (this->_surfaceStatusName) {
 		this->_destRectName = { 75, 305, this->_surfaceName->w, this->_surfaceName->h };
 		if (this->_textureStatusName) {
-			SDL_RenderCopy(this->_renderer, this->_textureName, NULL, &this->_destRectName);
+			rawimage x;
+			x.texture = _textureName;
+			x.rect = &_destRectName;
+			return x;
+			//SDL_RenderCopy(this->_renderer, this->_textureName, NULL, &this->_destRectName);
 		}
 		else {
 			std::cout << "Message id: " << std::to_string(this->_id);

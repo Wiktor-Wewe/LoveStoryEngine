@@ -61,8 +61,14 @@ public:
 	std::vector<int> getShowCharacters();
 	bool getSurfaceStatus();
 	bool getTextureStatus();
-	void draw();
-	void drawName();
+
+	struct rawimage {
+		SDL_Texture* texture;
+		SDL_Rect* rect;
+	};
+
+	rawimage getTextTexture();
+	rawimage getNameTexture();
 
 private:
 	int _id;
