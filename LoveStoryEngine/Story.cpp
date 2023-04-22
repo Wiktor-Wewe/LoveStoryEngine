@@ -62,6 +62,7 @@ int Story::play()
 {
 
     Message* m = this->_findMessageById(1);
+
     if (m) {
         ChooseClothesEvent* cce = nullptr;
         MakeProtagonistEvent* mpe = nullptr;
@@ -74,7 +75,7 @@ int Story::play()
         bool quit = false;
         bool pass = false;
 
-        while (!quit)
+        while (!quit) //add frameSkip and frameLimit
         {
             while (SDL_PollEvent(&event)) {
                 switch (event.type) {
@@ -96,6 +97,29 @@ int Story::play()
                 if (m) {
                     this->_scene->clear();
                     this->_handleMessage(m);
+                }
+                else if (e) {
+                    if (!e->getPlayerOptions().empty()) {
+                        pass = true; // make another search for next 
+                    }
+                    else {
+                        // blur
+                        // draw options 
+                        // handleEvent (in story) -> handleEventOptions (in scene for loop)
+                    } 
+                }
+                else if (mpe) {
+                    // add BASE bgimage for mpe and cce
+                    // add bgimage to script in mpe and cce - add this to compiler
+                    // handleMPE (in story) -> handleMPEOptions (in scene for loop)
+                }
+                else if(cce) {
+                    // -||-
+                    // -||-
+                    // handleCCE (in story) -> handleCCEOtions (in scene for loop)
+                }
+                else {
+                    return 2; // end of scenario
                 }
             }
 
