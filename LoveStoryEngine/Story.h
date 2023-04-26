@@ -91,7 +91,12 @@ private:
 	void _tryDrawImage(int id, int x, int y);
 	Character* _tryGetCharacter(int id);
 
-	void _showEvent(Event* e);
+	// event
+	void _handleEvent(Event* e);
+	void _showEventInfo(Event* e);
+
+	int _getSelectedOptionId(int* mouse_x, int* mouse_y, std::vector<Event::rawimage>& options);
+
 	void _showMPE(MakeProtagonistEvent* mpe);
 	void _showCCE(ChooseClothesEvent* cce);
 	void _printInfoAboutPlayer();

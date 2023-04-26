@@ -74,6 +74,10 @@ int Story::play()
         SDL_Event event;
         bool quit = false;
         bool pass = false;
+        bool endOfEvent = true;
+        int mouse_x = 0;
+        int mouse_y = 0;
+        int option = -1;
 
         while (!quit) //add frameSkip and frameLimit
         {
@@ -87,11 +91,27 @@ int Story::play()
                         pass = true;
                     }
                     break;
+                case SDL_MOUSEBUTTONDOWN:
+                    if (event.button.button == SDL_BUTTON_LEFT) {
+                        if (!endOfEvent) {
+                            if (option >= 0) {
+                                std::cout << std::to_string(option) << std::endl;
+                                endOfEvent = true;
+                                m = this->_findMessageById(e->getNextMessages()[option]);
+                                e = nullptr;
+                                this->_scene->clear();
+                                this->_handleMessage(m);
+                            }
+                        }
+                    }
+                    break;
                 }
             }
 
-            if (pass) {
-                this->searchNext(m, e, mpe, cce);
+            if (pass && endOfEvent) {
+                if (pass) {
+                    this->searchNext(m, e, mpe, cce);
+                }
                 pass = false;
 
                 if (m) {
@@ -99,12 +119,21 @@ int Story::play()
                     this->_handleMessage(m);
                 }
                 else if (e) {
-                    if (!e->getPlayerOptions().empty()) {
+                    if (e->getPlayerOptions().empty()) {
                         pass = true; // make another search for next 
                     }
                     else {
-                        // blur
-                        // draw options 
+                        endOfEvent = false;
+                        this->_handleEvent(e);
+                        this->_scene->draw();
+                        SDL_RenderPresent(this->_renderer);
+
+                        int nextMessage;
+                        //std::cin >> nextMessage;
+                        //std::vector<int> nextMessages = e->getNextMessages();
+                        //e = nullptr;
+                        //m = this->_findMessageById(nextMessages[nextMessage]);
+
                         // handleEvent (in story) -> handleEventOptions (in scene for loop)
                     } 
                 }
@@ -123,9 +152,17 @@ int Story::play()
                 }
             }
 
+            option = -1;
+            if (!endOfEvent) {
+                SDL_GetMouseState(&mouse_x, &mouse_y);
+                auto w = e->getOptionsTextureRect();
+                option = this->_getSelectedOptionId(&mouse_x, &mouse_y, w);
+            }
+
             SDL_RenderClear(this->_renderer);
             this->_scene->draw();
             SDL_RenderPresent(this->_renderer);
+            SDL_Delay(1);
         }
     }
     else {
@@ -320,7 +357,8 @@ void Story::_drawCharacters(Message* m)
         if (m->getShowCharacters()[i] == 1) {
             int x = this->_getPlayer()->getX();
             int y = this->_getPlayer()->getY();
-            this->_findImageById(this->_getPlayer()->getCurrentSpriteId())->draw(x, y);
+            this->_tryDrawImage(this->_getPlayer()->getCurrentSpriteId(), x, y);
+            //this->_findImageById(this->_getPlayer()->getCurrentSpriteId())->draw(x, y);
         }
 
         Character* character = this->_tryGetCharacter(m->getShowCharacters()[i]);
@@ -353,7 +391,18 @@ Character* Story::_tryGetCharacter(int id)
     return character;
 }
 
-void Story::_showEvent(Event* e)
+void Story::_handleEvent(Event* e)
+{
+    this->_showEventInfo(e);
+    this->_scene->setSceneBlack(this->_findImageById(503));
+    auto options = e->getOptionsTextureRect();
+    for (int i = 0; i < options.size(); i++) {
+        this->_scene->addRawImage(options[i]);
+        this->_tryDrawImage(504, (640 / 2) - (280 / 2), options[i].rect->y - 5);
+    }
+}
+
+void Story::_showEventInfo(Event* e)
 {
     std::cout << "id: " << e->getId() << std::endl;
     std::cout << "next messages: ";
@@ -375,6 +424,18 @@ void Story::_showEvent(Event* e)
         std::cout << "[" << i << "] " << e->getPlayerOptions()[i] << std::endl;
     }
     std::cout << std::endl;
+}
+
+int Story::_getSelectedOptionId(int* mouse_x, int* mouse_y, std::vector<Event::rawimage>& options)
+{
+    for (int i = 0; i < options.size(); i++) {
+         if (*mouse_x >= options[i].rect->x - 10 && *mouse_x <= options[i].rect->x + options[i].rect->w + 10) {
+            if (*mouse_y >= options[i].rect->y - 10 && *mouse_y <= options[i].rect->y + options[i].rect->h + 10) {
+                return i;
+            }
+        }
+    }
+    return -1;
 }
 
 void Story::_showMPE(MakeProtagonistEvent* mpe)
@@ -760,7 +821,7 @@ void Story::_loadEvents(std::fstream* file)
         file->read(reinterpret_cast<char*>(&ccei), sizeof(uint16_t));
         file->read(reinterpret_cast<char*>(&show), sizeof(uint16_t));
 
-        this->_Events.push_back(Event(buffId, playerOptions, nextMessages, nextEvents, mpei, ccei, show));
+        this->_Events.push_back(Event(buffId, playerOptions, nextMessages, nextEvents, mpei, ccei, show, this->_renderer, this->_font));
 
         playerOptions.clear();
         nextMessages.clear();
@@ -1115,17 +1176,7 @@ void Story::searchNext(Message*& m, Event*& e, MakeProtagonistEvent*& mpe, Choos
     }
     else if (e) {
         this->_clsAndShowInfo();
-        if (!e->getPlayerOptions().empty()) {
-            this->_showEvent(e);
-
-            int nextMessage;
-            std::cin >> nextMessage;
-
-            std::vector<int> nextMessages = e->getNextMessages();
-            e = nullptr;
-            m = this->_findMessageById(nextMessages[nextMessage]);
-        }
-        else {
+        if (e->getPlayerOptions().empty()) {
             int mpei = e->getMpei();
             int ccei = e->getCcei();
             if (mpei != 0) {
