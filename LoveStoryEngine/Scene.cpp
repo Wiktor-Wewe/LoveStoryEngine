@@ -5,6 +5,7 @@ void Scene::draw()
 	for (int i = 0; i < this->_images.size(); i++) {
 		this->_images[i]->draw(this->_positions[i].x, this->_positions[i].y);
 	}
+
 	for (int i = 0; i < this->_rawimages.size(); i++) {
 		this->_drawRawimage(this->_rawimages[i]);
 	}
@@ -16,6 +17,7 @@ void Scene::draw()
 	for (int i = 0; i < this->_rawimagesE.size(); i++) {
  		this->_drawRawimage(this->_rawimagesE[i]);
 	}
+
 }
 
 void Scene::addImage(Image* image, int x, int y)
@@ -43,6 +45,21 @@ void Scene::setSceneBlack(Image* image)
 	this->_blackSceneImg = image;
 }
 
+void Scene::tryEraseImg(Image* image)
+{
+	for (int i = 0; i < this->_images.size(); i++) {
+		if (this->_images[i] == image) {
+			this->_positions.erase(this->_positions.begin() + i);
+		}
+	}
+
+	auto it = std::find(this->_images.begin(), this->_images.end(), image);
+
+	if (it != this->_images.end()) {
+		this->_images.erase(it);
+	}
+}
+
 void Scene::clear()
 {
 	this->_images.clear();
@@ -51,6 +68,15 @@ void Scene::clear()
 	this->_rawimagesE.clear();
 	this->_blackSceneImg = nullptr;
 	this->_blackScene = false;
+}
+
+Image* Scene::getLastElementFromImage()
+{
+	if (this->_images.empty()) {
+		return nullptr;
+	}
+
+	return this->_images[this->_images.size() - 1];
 }
 
 void Scene::_drawRawimage(Message::rawimage x)

@@ -94,10 +94,13 @@ private:
 	// event
 	void _handleEvent(Event* e);
 	void _showEventInfo(Event* e);
-
 	int _getSelectedOptionId(int* mouse_x, int* mouse_y, std::vector<Event::rawimage>& options);
 
-	void _showMPE(MakeProtagonistEvent* mpe);
+	// mpe
+	void _handleMPE(MakeProtagonistEvent* mpe);
+	void _showMPEInfo(MakeProtagonistEvent* mpe);
+
+
 	void _showCCE(ChooseClothesEvent* cce);
 	void _printInfoAboutPlayer();
 	std::string _tryGetName(Image* x, int id);

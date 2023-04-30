@@ -18,7 +18,10 @@ public:
 	void addRawImage(Message::rawimage x);
 	void addRawImage(Event::rawimage x);
 	void setSceneBlack(Image* image);
+	void tryEraseImg(Image* image);
 	void clear();
+
+	Image* getLastElementFromImage();
 
 private:
 	SDL_Renderer* _renderer;

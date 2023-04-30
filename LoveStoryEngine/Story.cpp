@@ -70,14 +70,17 @@ int Story::play()
 
         this->_scene->clear();
         this->_handleMessage(m);
+        this->_clsAndShowInfo();
 
         SDL_Event event;
         bool quit = false;
         bool pass = false;
         bool endOfEvent = true;
+        bool endOfMPE = true;
         int mouse_x = 0;
         int mouse_y = 0;
         int option = -1;
+        int cursor = 0;
 
         while (!quit) //add frameSkip and frameLimit
         {
@@ -100,6 +103,7 @@ int Story::play()
                                 m = this->_findMessageById(e->getNextMessages()[option]);
                                 e = nullptr;
                                 this->_scene->clear();
+                                this->_clsAndShowInfo();
                                 this->_handleMessage(m);
                             }
                         }
@@ -125,19 +129,15 @@ int Story::play()
                     else {
                         endOfEvent = false;
                         this->_handleEvent(e);
-                        this->_scene->draw();
-                        SDL_RenderPresent(this->_renderer);
-
-                        int nextMessage;
-                        //std::cin >> nextMessage;
-                        //std::vector<int> nextMessages = e->getNextMessages();
-                        //e = nullptr;
-                        //m = this->_findMessageById(nextMessages[nextMessage]);
-
-                        // handleEvent (in story) -> handleEventOptions (in scene for loop)
                     } 
                 }
                 else if (mpe) {
+                    endOfMPE = false;
+                    this->_scene->clear();
+                    this->_handleMPE(mpe);
+
+                    this->_scene->draw();
+                    SDL_RenderPresent(this->_renderer);
                     // add BASE bgimage for mpe and cce
                     // add bgimage to script in mpe and cce - add this to compiler
                     // handleMPE (in story) -> handleMPEOptions (in scene for loop)
@@ -157,6 +157,15 @@ int Story::play()
                 SDL_GetMouseState(&mouse_x, &mouse_y);
                 auto w = e->getOptionsTextureRect();
                 option = this->_getSelectedOptionId(&mouse_x, &mouse_y, w);
+                if (this->_scene->getLastElementFromImage()->getId() == 505) {
+                    this->_scene->tryEraseImg(this->_findImageById(505));
+                }
+                if (option >= 0) {
+                    this->_tryDrawImage(505, (640 / 2) - (280 / 2), w[option].rect->y - 5);
+                }
+            }
+            else if (!endOfMPE) {
+
             }
 
             SDL_RenderClear(this->_renderer);
@@ -438,7 +447,21 @@ int Story::_getSelectedOptionId(int* mouse_x, int* mouse_y, std::vector<Event::r
     return -1;
 }
 
-void Story::_showMPE(MakeProtagonistEvent* mpe)
+void Story::_handleMPE(MakeProtagonistEvent* mpe)
+{
+    //this->_showMPEInfo(mpe);
+    int px = -160;
+    int py = -160;
+    for (int y = 0; y < mpe->getFaces().size(); y++) {
+        for (int x = 0; x < mpe->getFaces()[y].size(); x++) {
+            this->_tryDrawImage(mpe->getFaces()[y][x], px+(x*150), py);
+        }
+        py += 150;
+    }
+
+}
+
+void Story::_showMPEInfo(MakeProtagonistEvent* mpe)
 {
     std::cout << "next message id: " << mpe->getNextMessageId() << std::endl;
     std::cout << std::endl;
@@ -1194,11 +1217,11 @@ void Story::searchNext(Message*& m, Event*& e, MakeProtagonistEvent*& mpe, Choos
     }
     else if (mpe) {
         this->_clsAndShowInfo();
-        this->_showMPE(mpe);
+        //this->_showMPE(mpe);
 
-        int nextMessageId = mpe->getNextMessageId();
-        m = this->_findMessageById(nextMessageId);
-        mpe = nullptr;
+        //int nextMessageId = mpe->getNextMessageId();
+        //m = this->_findMessageById(nextMessageId);
+        //mpe = nullptr;
     }
     else if (cce) {
         this->_clsAndShowInfo();
