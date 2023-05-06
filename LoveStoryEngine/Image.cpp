@@ -64,3 +64,13 @@ void Image::draw(int x, int y)
 		std::cout << " surface status: false" << std::endl;
 	}
 }
+
+SDL_Surface* Image::getSurface()
+{
+	return this->_surface;
+}
+
+SDL_Texture* Image::getTexture()
+{
+	return this->_texture;
+}

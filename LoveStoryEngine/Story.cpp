@@ -136,8 +136,15 @@ int Story::play()
                     this->_scene->clear();
                     this->_handleMPE(mpe);
 
-                    this->_scene->draw();
-                    SDL_RenderPresent(this->_renderer);
+                    std::vector<std::vector<Image*>> images;
+                    for (int y = 0; y < mpe->getFaces().size(); y++) {
+                        images.push_back(std::vector<Image*>());
+                        for (int x = 0; x < mpe->getFaces()[y].size(); x++) {
+                            images[y].push_back(this->_findImageById(mpe->getFaces()[y][x]));
+                        }
+                    }
+                    this->_scene->makeWindow(350, 50, 230, 380, images);
+                    
                     // add BASE bgimage for mpe and cce
                     // add bgimage to script in mpe and cce - add this to compiler
                     // handleMPE (in story) -> handleMPEOptions (in scene for loop)

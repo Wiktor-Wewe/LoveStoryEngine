@@ -26,6 +26,8 @@ public:
 	bool getSurfaceStatus();
 	bool getTextureStatus();
 	void draw(int x, int y);
+	SDL_Surface* getSurface();
+	SDL_Texture* getTexture();
 
 private:
 	int _id;
