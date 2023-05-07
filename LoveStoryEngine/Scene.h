@@ -11,6 +11,7 @@ public:
 		this->_renderer = renderer;
 		this->_blackScene = false;
 		this->_blackSceneImg = nullptr;
+		this->windowShow = false;
 	}
 
 	void draw();
@@ -22,11 +23,11 @@ public:
 	void clear();
 
 	void makeWindow(int x, int y, int w, int h, std::vector<std::vector<Image*>>& images);
+	bool isWindowShow();
+	void scrolWindow(int dy);
 	void clearWindow();
 	void drawWindow();
-	void scrolWindow(int mouse_x, int mouse_y);
-	int getSelectedIdFromWindow();
-
+	int getSelectedIdFromWindow(int x, int y);
 
 	Image* getLastElementFromImage();
 
@@ -47,10 +48,14 @@ private:
 	void _drawRawimage(Event::rawimage x);
 
 	//window
+	bool windowShow;
 	SDL_Texture* _windowTexture;
 	SDL_Texture* _windowSelTexture;
 	SDL_Rect _windowSrc_rect;
 	SDL_Rect _windowDest_rect;
+
+	std::vector<std::vector<Image*>> _listOfElements;
+	std::vector<std::vector<int>> _idOfElemetsInOrder;
 
 };
 

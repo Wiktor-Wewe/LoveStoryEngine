@@ -93,6 +93,16 @@ int Story::play()
                     if (event.key.keysym.sym == SDLK_SPACE) {
                         pass = true;
                     }
+                    if (event.key.keysym.sym == SDLK_DOWN) {
+                        if (this->_scene->isWindowShow()) {
+                            this->_scene->scrolWindow(5);
+                        }
+                    }
+                    if (event.key.keysym.sym == SDLK_UP) {
+                        if (this->_scene->isWindowShow()) {
+                            this->_scene->scrolWindow(-5);
+                        }
+                    }
                     break;
                 case SDL_MOUSEBUTTONDOWN:
                     if (event.button.button == SDL_BUTTON_LEFT) {
@@ -133,8 +143,8 @@ int Story::play()
                 }
                 else if (mpe) {
                     endOfMPE = false;
-                    this->_scene->clear();
-                    this->_handleMPE(mpe);
+                    //this->_scene->clear();
+                    this->_handleMPE(mpe); // <- do nothing
 
                     std::vector<std::vector<Image*>> images;
                     for (int y = 0; y < mpe->getFaces().size(); y++) {
@@ -143,7 +153,7 @@ int Story::play()
                             images[y].push_back(this->_findImageById(mpe->getFaces()[y][x]));
                         }
                     }
-                    this->_scene->makeWindow(350, 50, 230, 380, images);
+                    this->_scene->makeWindow(250, 50, 380, 380, images);
                     
                     // add BASE bgimage for mpe and cce
                     // add bgimage to script in mpe and cce - add this to compiler
@@ -177,6 +187,15 @@ int Story::play()
 
             SDL_RenderClear(this->_renderer);
             this->_scene->draw();
+            if (this->_scene->isWindowShow()) {
+                this->_scene->drawWindow();
+
+                SDL_GetMouseState(&mouse_x, &mouse_y);
+                int selectedElement = this->_scene->getSelectedIdFromWindow(mouse_x, mouse_y);
+                if (selectedElement) {
+                    std::cout << "id: " << selectedElement << std::endl;
+                }
+            }
             SDL_RenderPresent(this->_renderer);
             SDL_Delay(1);
         }
@@ -456,15 +475,6 @@ int Story::_getSelectedOptionId(int* mouse_x, int* mouse_y, std::vector<Event::r
 
 void Story::_handleMPE(MakeProtagonistEvent* mpe)
 {
-    //this->_showMPEInfo(mpe);
-    int px = -160;
-    int py = -160;
-    for (int y = 0; y < mpe->getFaces().size(); y++) {
-        for (int x = 0; x < mpe->getFaces()[y].size(); x++) {
-            this->_tryDrawImage(mpe->getFaces()[y][x], px+(x*150), py);
-        }
-        py += 150;
-    }
 
 }
 

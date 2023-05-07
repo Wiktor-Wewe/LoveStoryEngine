@@ -72,7 +72,7 @@ void Scene::clear()
 
 void Scene::makeWindow(int x, int y, int w, int h, std::vector<std::vector<Image*>>& images)
 {
-	// make big texture with all options
+	this->_listOfElements = images;
 	this->_windowDest_rect = { x, y, w, h };
 	
 	auto selColorimages = images[0];
@@ -94,21 +94,67 @@ void Scene::makeWindow(int x, int y, int w, int h, std::vector<std::vector<Image
 	SDL_SetRenderDrawColor(this->_renderer, 255, 255, 255, 255);
 	SDL_RenderClear(this->_renderer);
 
+	this->_idOfElemetsInOrder.push_back(std::vector<int>());
+	int layer = 0;
+
 	SDL_Rect buff_rect = { 0, 0, selColorimages[0]->getSurface()->w , selColorimages[0]->getSurface()->h };
 	for (int i = 0; i < selColorimages.size(); i++) {
 		SDL_RenderCopy(this->_renderer, selColorimages[i]->getTexture(), NULL, &buff_rect);
+		this->_idOfElemetsInOrder[layer].push_back(selColorimages[i]->getId());
 		buff_rect.x += selColorimages[i]->getSurface()->w;
 		if (buff_rect.x + buff_rect.w >= widthTexture) {
 			buff_rect.x = 0;
 			buff_rect.y += buff_rect.h;
+
+			this->_idOfElemetsInOrder.push_back(std::vector<int>());
+			layer++;
 		}
 	}
 	SDL_SetRenderTarget(this->_renderer, NULL);
 	this->_windowSrc_rect = { 0, 0, widthTexture, h };
+	this->windowShow = true;
+}
+
+bool Scene::isWindowShow()
+{
+	return this->windowShow;
+}
+
+void Scene::scrolWindow(int dy)
+{
+	int maxh = this->_windowDest_rect.h - this->_windowDest_rect.y;
+	if (this->_windowSrc_rect.y + dy <= maxh && this->_windowSrc_rect.y + dy >= 0) {
+		this->_windowSrc_rect.y += dy;
+	}
+}
+
+void Scene::drawWindow()
+{
 	SDL_RenderCopy(this->_renderer, this->_windowTexture, &this->_windowSrc_rect, &_windowDest_rect);
-	//this->_scene->draw();
-	SDL_RenderPresent(this->_renderer);
-	system("pause");
+}
+
+int Scene::getSelectedIdFromWindow(int x, int y)
+{
+	if (x >= this->_windowDest_rect.x && x <= this->_windowDest_rect.x + this->_windowDest_rect.w &&
+		y >= this->_windowDest_rect.y && y <= this->_windowDest_rect.y + this->_windowDest_rect.h) 
+	{
+		x = x - this->_windowDest_rect.x;
+		y = y - this->_windowDest_rect.y;
+
+		int sizeOfElemetnX = this->_listOfElements[0][0]->getSurface()->w;
+		int sizeOfElementY = this->_listOfElements[0][0]->getSurface()->h;
+
+		int elementX = x / sizeOfElemetnX;
+		int elementY = (y + this->_windowSrc_rect.y) / sizeOfElementY;
+
+		if (elementY >= 0 && elementY < this->_idOfElemetsInOrder.size() && 
+			elementX >= 0 && elementX < this->_idOfElemetsInOrder[elementY].size()) 
+		{
+			return this->_idOfElemetsInOrder[elementY][elementX];
+		}
+		return -1;
+	}
+	return 0;
 }
 
 Image* Scene::getLastElementFromImage()
