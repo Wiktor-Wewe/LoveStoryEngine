@@ -103,6 +103,20 @@ int Story::play()
                             this->_scene->scrolWindow(-5);
                         }
                     }
+                    if (event.key.keysym.sym == SDLK_LEFT) {
+                        if (this->_scene->isWindowShow()) {
+                            this->_scene->changeSet(-1);
+                            this->_scene->clearWindow();
+                            pass = true;
+                        }
+                    }
+                    if (event.key.keysym.sym == SDLK_RIGHT) {
+                        if (this->_scene->isWindowShow()) {
+                            this->_scene->changeSet(1);
+                            this->_scene->clearWindow();
+                            pass = true;
+                        }
+                    }
                     break;
                 case SDL_MOUSEBUTTONDOWN:
                     if (event.button.button == SDL_BUTTON_LEFT) {
@@ -153,7 +167,7 @@ int Story::play()
                             images[y].push_back(this->_findImageById(mpe->getFaces()[y][x]));
                         }
                     }
-                    this->_scene->makeWindow(250, 50, 380, 380, images);
+                    this->_scene->makeWindow(330, 50, 230, 380, images);
                     
                     // add BASE bgimage for mpe and cce
                     // add bgimage to script in mpe and cce - add this to compiler

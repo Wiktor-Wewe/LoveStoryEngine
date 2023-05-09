@@ -159,6 +159,7 @@
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Sfx.cpp" />
     <ClCompile Include="Story.cpp" />
+    <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Character.h" />
@@ -172,6 +173,7 @@
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Sfx.h" />
     <ClInclude Include="Story.h" />
+    <ClInclude Include="Window.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

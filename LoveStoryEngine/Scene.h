@@ -12,6 +12,7 @@ public:
 		this->_blackScene = false;
 		this->_blackSceneImg = nullptr;
 		this->windowShow = false;
+		this->_set = 0;
 	}
 
 	void draw();
@@ -23,6 +24,7 @@ public:
 	void clear();
 
 	void makeWindow(int x, int y, int w, int h, std::vector<std::vector<Image*>>& images);
+	void changeSet(int x);
 	bool isWindowShow();
 	void scrolWindow(int dy);
 	void clearWindow();
@@ -53,7 +55,10 @@ private:
 	SDL_Texture* _windowSelTexture;
 	SDL_Rect _windowSrc_rect;
 	SDL_Rect _windowDest_rect;
+	int _sizeOfTextureY;
+	int _set;
 
+	std::vector<std::vector<Image*>> _windowImages;
 	std::vector<std::vector<Image*>> _listOfElements;
 	std::vector<std::vector<int>> _idOfElemetsInOrder;
 

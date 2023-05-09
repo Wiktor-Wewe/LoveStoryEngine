@@ -75,7 +75,8 @@ void Scene::makeWindow(int x, int y, int w, int h, std::vector<std::vector<Image
 	this->_listOfElements = images;
 	this->_windowDest_rect = { x, y, w, h };
 	
-	auto selColorimages = images[0];
+	this->_windowImages = images;
+	auto selColorimages = images[this->_set];
 
 	int widthTexture = w;
 	int heightTexture = h;
@@ -83,12 +84,16 @@ void Scene::makeWindow(int x, int y, int w, int h, std::vector<std::vector<Image
 	int maxy = 0;
 
 	maxx = w / selColorimages[0]->getSurface()->w;
-	maxy = (selColorimages.size() / maxx) + 1;
+	maxy = (selColorimages.size() / maxx);
+	if (selColorimages.size() % maxx != 0) {
+		maxy++;
+	}
 
 	if (maxy * selColorimages[0]->getSurface()->h > h) {
 		heightTexture = maxy * selColorimages[0]->getSurface()->h;
 	}
 
+	this->_sizeOfTextureY = heightTexture;
 	this->_windowTexture = SDL_CreateTexture(this->_renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, widthTexture, heightTexture);
 	SDL_SetRenderTarget(this->_renderer, this->_windowTexture);
 	SDL_SetRenderDrawColor(this->_renderer, 255, 255, 255, 255);
@@ -115,6 +120,26 @@ void Scene::makeWindow(int x, int y, int w, int h, std::vector<std::vector<Image
 	this->windowShow = true;
 }
 
+void Scene::changeSet(int x)
+{
+	if (x > 0) {
+		if (this->_set + x < this->_windowImages.size()) {
+			this->_set += x;
+		}
+		else {
+			this->_set = 0;
+		}
+	}
+	else if (x < 0) {
+		if (this->_set + x < 0) {
+			this->_set = this->_windowImages.size() - 1;
+		}
+		else {
+			this->_set += x;
+		}
+	}
+}
+
 bool Scene::isWindowShow()
 {
 	return this->windowShow;
@@ -122,10 +147,28 @@ bool Scene::isWindowShow()
 
 void Scene::scrolWindow(int dy)
 {
-	int maxh = this->_windowDest_rect.h - this->_windowDest_rect.y;
+	int maxh = this->_sizeOfTextureY - this->_windowDest_rect.h;
 	if (this->_windowSrc_rect.y + dy <= maxh && this->_windowSrc_rect.y + dy >= 0) {
 		this->_windowSrc_rect.y += dy;
 	}
+}
+
+void Scene::clearWindow()
+{
+	this->windowShow = false;
+	
+	SDL_DestroyTexture(this->_windowTexture);
+	this->_windowTexture = NULL;
+
+	SDL_DestroyTexture(this->_windowSelTexture);
+	this->_windowSelTexture = NULL;
+
+	this->_sizeOfTextureY = 0;
+	//this->_set = 0;
+
+	this->_windowImages.clear();
+	this->_listOfElements.clear();
+	this->_idOfElemetsInOrder.clear();
 }
 
 void Scene::drawWindow()

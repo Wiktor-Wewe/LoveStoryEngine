@@ -100,7 +100,6 @@ private:
 	void _handleMPE(MakeProtagonistEvent* mpe);
 	void _showMPEInfo(MakeProtagonistEvent* mpe);
 
-
 	void _showCCE(ChooseClothesEvent* cce);
 	void _printInfoAboutPlayer();
 	std::string _tryGetName(Image* x, int id);
