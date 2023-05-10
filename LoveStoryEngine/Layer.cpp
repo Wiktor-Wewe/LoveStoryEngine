@@ -32,11 +32,13 @@ void Layer::clear()
     SDL_SetRenderTarget(this->_renderer, NULL);
 }
 
-bool Layer::addImage(Image* img, SDL_Rect& position)
+bool Layer::addImage(Image* img, int x, int y, int w, int h)
 {
+    SDL_Rect* position = new SDL_Rect {x, y, w, h};
+
     if (img != nullptr && img->getTextureStatus()) {
         this->_images.push_back(img);
-        this->_imagesPositions.push_back(&position);
+        this->_imagesPositions.push_back(position);
         return true;
     }
     return false;
@@ -55,8 +57,9 @@ bool Layer::tryRemoveImg(Image* img)
     return false;
 }
 
-bool Layer::addTextTexture(std::string text, SDL_Rect& position, TTF_Font* font, SDL_Color color)
+bool Layer::addTextTexture(std::string text, int x, int y, int w, int h, TTF_Font* font, int r, int g, int b, int a)
 {
+    SDL_Color color = { r, g, b, a };
     SDL_Surface* surface = TTF_RenderText_Solid(font, text.c_str(), color);
     if (surface == nullptr) {
         return false;
@@ -71,7 +74,9 @@ bool Layer::addTextTexture(std::string text, SDL_Rect& position, TTF_Font* font,
     SDL_FreeSurface(surface);
 
     this->_texts.push_back(texture);
-    this->_textsPositions.push_back(&position);
+
+    SDL_Rect* position = new SDL_Rect { x, y, w, h };
+    this->_textsPositions.push_back(position);
 
     return true;
 }

@@ -12,19 +12,20 @@ public:
 		this->_position = { 0, 0, 640, 480 };
 		this->_texture = SDL_CreateTexture(this->_renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, this->_position.w, this->_position.h);
 		SDL_SetRenderTarget(this->_renderer, this->_texture);
-		SDL_SetRenderDrawColor(this->_renderer, 255, 255, 255, 255);
+		SDL_SetRenderDrawColor(this->_renderer, 255, 255, 255, 0);
 		SDL_RenderClear(this->_renderer);
 		SDL_SetRenderTarget(this->_renderer, NULL);
+		SDL_SetTextureBlendMode(this->_texture, SDL_BLENDMODE_BLEND);
 	}
 
 	void draw();
 	void make();
 	void clear();
 	
-	bool addImage(Image* img, SDL_Rect& position);
+	bool addImage(Image* img, int x, int y, int w, int h);
 	bool tryRemoveImg(Image* img);
 	
-	bool addTextTexture(std::string text, SDL_Rect& position, TTF_Font* font, SDL_Color color);
+	bool addTextTexture(std::string text, int x, int y, int w, int h, TTF_Font* font, int r, int g, int b, int a);
 	bool tryRemoveText(int numberOfText);
 
 private:
