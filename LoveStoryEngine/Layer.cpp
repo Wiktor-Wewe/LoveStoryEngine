@@ -1,5 +1,37 @@
 #include "Layer.h"
 
+void Layer::draw()
+{
+    SDL_RenderCopy(this->_renderer, this->_texture, NULL, &this->_position);
+}
+
+void Layer::make()
+{
+    SDL_SetRenderTarget(this->_renderer, this->_texture);
+    
+    for (int i = 0; i < this->_images.size(); i++) {
+        SDL_RenderCopy(this->_renderer, this->_images[i]->getTexture(), NULL, this->_imagesPositions[i]);
+    }
+
+    for (int i = 0; i < this->_texts.size(); i++) {
+        SDL_RenderCopy(this->_renderer, this->_texts[i], NULL, this->_textsPositions[i]);
+    }
+
+    SDL_SetRenderTarget(this->_renderer, NULL);
+}
+
+void Layer::clear()
+{
+    this->_images.clear();
+    this->_imagesPositions.clear();
+    this->_texts.clear();
+    this->_textsPositions.clear();
+
+    SDL_SetRenderTarget(this->_renderer, this->_texture);
+    SDL_RenderClear(this->_renderer);
+    SDL_SetRenderTarget(this->_renderer, NULL);
+}
+
 bool Layer::addImage(Image* img, SDL_Rect& position)
 {
     if (img != nullptr && img->getTextureStatus()) {
@@ -23,14 +55,14 @@ bool Layer::tryRemoveImg(Image* img)
     return false;
 }
 
-bool Layer::addTextTexture(std::string text, SDL_Rect& position, TTF_Font* font, SDL_Color color, SDL_Renderer* renderer)
+bool Layer::addTextTexture(std::string text, SDL_Rect& position, TTF_Font* font, SDL_Color color)
 {
     SDL_Surface* surface = TTF_RenderText_Solid(font, text.c_str(), color);
     if (surface == nullptr) {
         return false;
     }
 
-    SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
+    SDL_Texture* texture = SDL_CreateTextureFromSurface(this->_renderer, surface);
     if (texture == nullptr) {
         SDL_FreeSurface(surface);
         return false;

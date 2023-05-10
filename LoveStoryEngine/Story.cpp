@@ -1,4 +1,5 @@
 #include "Story.h"
+#include "Layer.h"
 
 std::string Story::getName()
 {
@@ -82,6 +83,15 @@ int Story::play()
         int option = -1;
         int cursor = 0;
 
+        //
+        Layer layer = Layer(this->_renderer);
+        SDL_Rect a = { 100, 120, 140, 160 };
+        layer.addImage(this->_findImageById(1), a);
+        SDL_Color c = { 255, 165, 0 };
+        layer.addTextTexture("Wiktor", a, this->_font, c);
+        layer.make();
+        layer.clear();
+        //
         while (!quit) //add frameSkip and frameLimit
         {
             while (SDL_PollEvent(&event)) {
@@ -210,6 +220,7 @@ int Story::play()
                     std::cout << "id: " << selectedElement << std::endl;
                 }
             }
+            layer.draw();
             SDL_RenderPresent(this->_renderer);
             SDL_Delay(1);
         }
