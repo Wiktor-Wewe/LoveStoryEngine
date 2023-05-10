@@ -151,6 +151,7 @@
     <ClCompile Include="ChooseClothesEvent.cpp" />
     <ClCompile Include="Event.cpp" />
     <ClCompile Include="Image.cpp" />
+    <ClCompile Include="Layer.cpp" />
     <ClCompile Include="LoveStoryEngine.cpp" />
     <ClCompile Include="MakeProtagonistEvent.cpp" />
     <ClCompile Include="Message.cpp" />
@@ -166,6 +167,7 @@
     <ClInclude Include="ChooseClothesEvent.h" />
     <ClInclude Include="Event.h" />
     <ClInclude Include="Image.h" />
+    <ClInclude Include="Layer.h" />
     <ClInclude Include="MakeProtagonistEvent.h" />
     <ClInclude Include="Message.h" />
     <ClInclude Include="Music.h" />
