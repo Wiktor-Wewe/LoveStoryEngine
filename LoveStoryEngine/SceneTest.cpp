@@ -40,3 +40,11 @@ Layer* SceneTest::getLayer(int number)
     }
     return nullptr;
 }
+
+Layer* SceneTest::getLastLayer()
+{
+    if (this->_layers.size() < 1) {
+        return nullptr;
+    }
+    return this->_layers[this->_layers.size() - 1];
+}

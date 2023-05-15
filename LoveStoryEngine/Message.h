@@ -30,6 +30,7 @@ public:
 		this->_showCharacters = showCharacters;
 		this->_renderer = renderer;
 		this->_font = font;
+		this->_name = name;
 
 		this->_surfaceStatusName = this->_loadSurfaceName(name);
 		this->_textureStatusName = false;
@@ -61,6 +62,7 @@ public:
 	std::vector<int> getShowCharacters();
 	bool getSurfaceStatus();
 	bool getTextureStatus();
+	std::string getName();
 
 	struct rawimage {
 		SDL_Texture* texture;
@@ -87,6 +89,7 @@ private:
 	int _characterX;
 	int _characterY;
 	std::vector<int> _showCharacters;
+	std::string _name;
 
 	// sdl
 	SDL_Renderer* _renderer;

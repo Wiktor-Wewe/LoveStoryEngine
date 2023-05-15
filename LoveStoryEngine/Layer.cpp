@@ -17,6 +17,10 @@ void Layer::make()
         SDL_RenderCopy(this->_renderer, this->_texts[i], NULL, this->_textsPositions[i]);
     }
 
+    for (int i = 0; i < this->_textures.size(); i++) {
+        SDL_RenderCopy(this->_renderer, this->_textures[i], NULL, this->_texturesPositions[i]);
+    }
+
     SDL_SetRenderTarget(this->_renderer, NULL);
 }
 
@@ -26,22 +30,23 @@ void Layer::clear()
     this->_imagesPositions.clear();
     this->_texts.clear();
     this->_textsPositions.clear();
-
-    SDL_SetRenderTarget(this->_renderer, this->_texture);
-    SDL_RenderClear(this->_renderer);
-    SDL_SetRenderTarget(this->_renderer, NULL);
+    this->_textures.clear();
+    this->_texturesPositions.clear();
 }
 
-bool Layer::addImage(Image* img, int x, int y, int w, int h)
+bool Layer::addImage(Image* img, int x, int y)
 {
+    if (img == nullptr || !img->getTextureStatus()) {
+        return false;
+    }
+
+    int w = img->getSurface()->w;
+    int h = img->getSurface()->h;
     SDL_Rect* position = new SDL_Rect {x, y, w, h};
 
-    if (img != nullptr && img->getTextureStatus()) {
-        this->_images.push_back(img);
-        this->_imagesPositions.push_back(position);
-        return true;
-    }
-    return false;
+    this->_images.push_back(img);
+    this->_imagesPositions.push_back(position);
+    return true;
 }
 
 bool Layer::tryRemoveImg(Image* img)
@@ -57,7 +62,7 @@ bool Layer::tryRemoveImg(Image* img)
     return false;
 }
 
-bool Layer::addTextTexture(std::string text, int x, int y, int w, int h, TTF_Font* font, int r, int g, int b, int a)
+bool Layer::addText(std::string text, int x, int y, TTF_Font* font, int r, int g, int b, int a)
 {
     SDL_Color color = { r, g, b, a };
     SDL_Surface* surface = TTF_RenderText_Solid(font, text.c_str(), color);
@@ -71,6 +76,8 @@ bool Layer::addTextTexture(std::string text, int x, int y, int w, int h, TTF_Fon
         return false;
     }
 
+    int w = surface->w;
+    int h = surface->h;
     SDL_FreeSurface(surface);
 
     this->_texts.push_back(texture);
@@ -90,6 +97,32 @@ bool Layer::tryRemoveText(int numberOfText)
             this->_texts.erase(text);
             auto position = std::find(this->_textsPositions.begin(), this->_textsPositions.end(), this->_textsPositions[numberOfText]);
             this->_textsPositions.erase(position);
+            return true;
+        }
+    }
+    return false;
+}
+
+bool Layer::addTexture(SDL_Texture* texture, int x, int y, int w, int h)
+{
+    if (texture == NULL) {
+        return false;
+    }
+
+    this->_textures.push_back(texture);
+    SDL_Rect* rect = new SDL_Rect{ x, y, w, h };
+    this->_texturesPositions.push_back(rect);
+}
+
+bool Layer::tryRemoveTexture(int numberOfTexture)
+{
+    if (numberOfTexture < this->_textures.size()) {
+        SDL_DestroyTexture(this->_textures[numberOfTexture]);
+        auto texture = std::find(this->_textures.begin(), this->_textures.end(), this->_textures[numberOfTexture]);
+        if (texture != this->_textures.end()) {
+            this->_textures.erase(texture);
+            auto position = std::find(this->_texturesPositions.begin(), this->_texturesPositions.end(), this->_texturesPositions[numberOfTexture]);
+            this->_texturesPositions.erase(position);
             return true;
         }
     }

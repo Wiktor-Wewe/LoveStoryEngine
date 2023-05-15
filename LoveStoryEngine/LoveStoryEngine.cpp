@@ -28,7 +28,7 @@ int main(int argc, char* args[])
     std::fstream file("script_test.wesc", std::ios::in | std::ios::binary);
     if (file.good()) {
         Story s(renderer, &file);
-        s.play();
+        s.playTest();
         return 0;
     }
 

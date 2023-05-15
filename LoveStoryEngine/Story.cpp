@@ -84,16 +84,6 @@ int Story::play()
         int option = -1;
         int cursor = 0;
 
-        SceneTest sceneTest = SceneTest(this->_renderer);
-        sceneTest.addLayer();
-        sceneTest.getLayer(0)->addImage(this->_findImageById(1), 0, 0, 300, 400);
-        sceneTest.getLayer(0)->addTextTexture("Test pisania", 100, 100, 280, 300, this->_font, 255, 0, 255, 255);
-        sceneTest.getLayer(0)->make();
-        sceneTest.addLayer();
-        sceneTest.getLayer(1)->addImage(this->_findImageById(4), 200, 40, 400, 300);
-        sceneTest.getLayer(1)->addTextTexture("DustyRoseEngine", 100, 100, 200, 50, this->_font, 0, 255, 255, 255);
-        sceneTest.getLayer(1)->make();
-
         while (!quit) //add frameSkip and frameLimit
         {
             while (SDL_PollEvent(&event)) {
@@ -222,13 +212,99 @@ int Story::play()
                     std::cout << "id: " << selectedElement << std::endl;
                 }
             }
-            sceneTest.draw();
             SDL_RenderPresent(this->_renderer);
             SDL_Delay(1);
         }
     }
     else {
         return 1; //cant find starting message
+    }
+
+    return 0;
+}
+
+int Story::playTest()
+{
+    Message* m = _findMessageById(1);
+    ChooseClothesEvent* cce = nullptr;
+    MakeProtagonistEvent* mpe = nullptr;
+    Event* e = nullptr;
+
+    if (!m) {
+        return -1;
+    }
+
+    SDL_Event event;
+    bool quit = false;
+    bool end = true;
+    bool pass = false;
+
+    while (!quit) //add frameSkip and frameLimit
+    {
+        while (SDL_PollEvent(&event)) {
+            switch (event.type) {
+            case SDL_QUIT:
+                quit = true;
+                break;
+            case SDL_KEYDOWN:
+                if (event.key.keysym.sym == SDLK_SPACE) {
+                    this->_control.add(Control::go);
+                }
+                if (event.key.keysym.sym == SDLK_DOWN) {
+                    this->_control.add(Control::down);
+                }
+                if (event.key.keysym.sym == SDLK_UP) {
+                    this->_control.add(Control::up);
+                }
+                if (event.key.keysym.sym == SDLK_LEFT) {
+                    this->_control.add(Control::left);
+                }
+                if (event.key.keysym.sym == SDLK_RIGHT) {
+                    this->_control.add(Control::right);
+                }
+                break;
+            case SDL_MOUSEBUTTONDOWN:
+                if (event.button.button == SDL_BUTTON_LEFT) {
+                    this->_control.add(Control::go);
+                }
+                break;
+            }
+        }
+
+        if (m && end) {
+            this->_sceneTest->clear();
+            this->_handleMessageTest(m);
+            end = false;
+        }
+        else if (m && !end) {
+            pass = this->_handleMessageLoopTest(m);
+            if (pass) {
+                end = true;
+            }
+        }
+
+        if (e && end) {
+            this->_handleEventTest(e);
+            end = false;
+        }
+        else if (e && !end) {
+            if (this->_handleEventLoopTest(e)) {
+                m = this->_findMessageById(e->getNextMessages()[this->_optionWindows->getSelectedId()]);
+                e = nullptr;
+                end = true;
+            }
+        }
+        
+        if (pass) {
+            this->searchNext(m, e, mpe, cce);
+            pass = false;
+        }
+
+        SDL_RenderClear(this->_renderer);
+        this->_control.clear();
+        this->_sceneTest->draw();
+        SDL_RenderPresent(this->_renderer);
+        SDL_Delay(1);
     }
 
     return 0;
@@ -453,6 +529,48 @@ Character* Story::_tryGetCharacter(int id)
     return character;
 }
 
+void Story::_handleMessageTest(Message* m)
+{
+    this->_showMessageInfo(m);
+    this->_setCharacterPosition(m);
+    this->_playMusic(m);
+    //this->_playSfx(m);
+    this->_sceneTest->addLayer();
+    auto bgImage = this->_findImageById(m->getBgImageId());
+    this->_sceneTest->getLastLayer()->addImage(bgImage, 0, 0);
+    
+    for (int i = 0; i < m->getShowCharacters().size(); i++) {
+        if (m->getShowCharacters()[i] == 1) {
+            int x = this->_getPlayer()->getX();
+            int y = this->_getPlayer()->getY();
+            auto currentSprite = this->_findImageById(this->_getPlayer()->getCurrentSpriteId());
+            this->_sceneTest->getLastLayer()->addImage(currentSprite, x, y);
+        }
+
+        Character* character = this->_tryGetCharacter(m->getShowCharacters()[i]);
+        if (character) {
+            auto currentSprite = this->_findImageById(character->getCurrentSprite());
+            this->_sceneTest->getLastLayer()->addImage(currentSprite, character->getX(), character->getY());
+        }
+    }
+    this->_sceneTest->getLastLayer()->make();
+
+    this->_sceneTest->addLayer();
+    auto messagebox = this->_findImageById(500);
+    this->_sceneTest->getLastLayer()->addImage(messagebox, 0, 0);
+    this->_sceneTest->getLastLayer()->addText(m->getName(), 75, 305, this->_font, 255, 255, 255, 255);
+    this->_sceneTest->getLastLayer()->addText(m->getText(), m->getMessageX(), m->getMessageY(), this->_font, 255, 255, 255, 255);
+    this->_sceneTest->getLastLayer()->make();
+}
+
+bool Story::_handleMessageLoopTest(Message* m)
+{
+    if (this->_control.get(Control::go)) {
+        return true;
+    }
+    return false;
+}
+
 void Story::_handleEvent(Event* e)
 {
     this->_showEventInfo(e);
@@ -498,6 +616,46 @@ int Story::_getSelectedOptionId(int* mouse_x, int* mouse_y, std::vector<Event::r
         }
     }
     return -1;
+}
+
+void Story::_handleEventTest(Event* e)
+{
+    this->_showEventInfo(e);
+    this->_sceneTest->addLayer();
+    this->_sceneTest->getLastLayer()->addImage(this->_findImageById(503), 0, 0);
+    this->_sceneTest->getLastLayer()->make();
+
+    this->_optionWindows->setTexts(e->getPlayerOptions());
+    this->_optionWindows->make();
+
+    this->_sceneTest->addLayer();
+    this->_sceneTest->getLastLayer()->addTexture(this->_optionWindows->getTexture(), 0, 0, 640, 480);
+    this->_sceneTest->getLastLayer()->make();
+}
+
+bool Story::_handleEventLoopTest(Event* e)
+{
+    if (this->_control.get(Control::up)) {
+        this->_optionWindows->setSelect(-1);
+    }
+
+    if (this->_control.get(Control::down)) {
+        this->_optionWindows->setSelect(1);
+    }
+
+    if (this->_control.get(Control::up) || this->_control.get(Control::down)) {
+        this->_optionWindows->make();
+        this->_sceneTest->getLastLayer()->clear();
+        this->_sceneTest->getLastLayer()->addTexture(this->_optionWindows->getTexture(), 0, 0, 640, 480);
+        this->_sceneTest->getLastLayer()->make();
+    }
+
+    auto id = this->_optionWindows->getSelectedId();
+    if (this->_control.get(Control::go) && id > -1) {
+        return true;
+    }
+
+    return false;
 }
 
 void Story::_handleMPE(MakeProtagonistEvent* mpe)

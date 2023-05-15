@@ -11,10 +11,6 @@ public:
 
 		this->_position = { 0, 0, 640, 480 };
 		this->_texture = SDL_CreateTexture(this->_renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, this->_position.w, this->_position.h);
-		SDL_SetRenderTarget(this->_renderer, this->_texture);
-		SDL_SetRenderDrawColor(this->_renderer, 255, 255, 255, 0);
-		SDL_RenderClear(this->_renderer);
-		SDL_SetRenderTarget(this->_renderer, NULL);
 		SDL_SetTextureBlendMode(this->_texture, SDL_BLENDMODE_BLEND);
 	}
 
@@ -22,11 +18,14 @@ public:
 	void make();
 	void clear();
 	
-	bool addImage(Image* img, int x, int y, int w, int h);
+	bool addImage(Image* img, int x, int y);
 	bool tryRemoveImg(Image* img);
 	
-	bool addTextTexture(std::string text, int x, int y, int w, int h, TTF_Font* font, int r, int g, int b, int a);
+	bool addText(std::string text, int x, int y, TTF_Font* font, int r, int g, int b, int a);
 	bool tryRemoveText(int numberOfText);
+
+	bool addTexture(SDL_Texture* texture, int x, int y, int w, int h);
+	bool tryRemoveTexture(int numberOfTexture);
 
 private:
 	SDL_Renderer* _renderer;
@@ -38,5 +37,8 @@ private:
 
 	std::vector<SDL_Texture*> _texts;
 	std::vector<SDL_Rect*> _textsPositions;
+
+	std::vector<SDL_Texture*> _textures;
+	std::vector<SDL_Rect*> _texturesPositions;
 };
 

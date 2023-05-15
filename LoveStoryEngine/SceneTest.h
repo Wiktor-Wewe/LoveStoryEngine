@@ -15,6 +15,7 @@ public:
 	void clear();
 
 	Layer* getLayer(int number);
+	Layer* getLastLayer();
 
 private:
 	SDL_Renderer* _renderer;

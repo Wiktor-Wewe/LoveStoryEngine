@@ -10,6 +10,9 @@
 #include "Protagonist.h"
 #include "Sfx.h"
 #include "Scene.h"
+#include "SceneTest.h"
+#include "Control.h"
+#include "OptionWindows.h"
 #include <fstream>
 #include <iostream>
 
@@ -36,11 +39,15 @@ public:
 		this->_Player = (Protagonist*)malloc(sizeof(Protagonist));
 		this->_Sfxs = std::vector<Sfx>();
 		this->_scene = new Scene(this->_renderer);
+		this->_sceneTest = new SceneTest(this->_renderer);
+
 		this->_currentMusicId = 0;
 
 		if (this->loadBase() && file != nullptr) {
 			this->loadStory(file);
 		}
+		
+		this->_optionWindows = new OptionWindows(this->_renderer, this->_font, this->_findImageById(504)->getTexture(), this->_findImageById(505)->getTexture());
 	}
 
 	std::string getName();
@@ -50,6 +57,7 @@ public:
 
 	int loadStory(std::fstream* file);
 	int play();
+	int playTest();
 
 private:
 	std::vector<Character> _Characters;
@@ -91,10 +99,19 @@ private:
 	void _tryDrawImage(int id, int x, int y);
 	Character* _tryGetCharacter(int id);
 
+	// messageTest
+	Control _control;
+	void _handleMessageTest(Message* m);
+	bool _handleMessageLoopTest(Message* m);
+
 	// event
 	void _handleEvent(Event* e);
 	void _showEventInfo(Event* e);
 	int _getSelectedOptionId(int* mouse_x, int* mouse_y, std::vector<Event::rawimage>& options);
+
+	// eventTest
+	void _handleEventTest(Event* e);
+	bool _handleEventLoopTest(Event* e);
 
 	// mpe
 	void _handleMPE(MakeProtagonistEvent* mpe);
@@ -136,8 +153,10 @@ private:
 	// play variable
 	void searchNext(Message*& m, Event*& e, MakeProtagonistEvent*& mpe, ChooseClothesEvent*& cce);
 	Scene* _scene;
+	SceneTest* _sceneTest;
 	SDL_Renderer* _renderer;
 	TTF_Font* _font;
+	OptionWindows* _optionWindows;
 	int _currentMusicId;
 };
 

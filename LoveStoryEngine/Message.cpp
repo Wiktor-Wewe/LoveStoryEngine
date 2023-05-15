@@ -90,6 +90,11 @@ bool Message::getTextureStatus()
 	return this->_textureStatus;
 }
 
+std::string Message::getName()
+{
+	return this->_name;
+}
+
 Message::rawimage Message::getTextTexture()
 {
 	if (this->_surfaceStatus) {

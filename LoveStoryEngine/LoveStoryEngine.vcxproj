@@ -149,6 +149,7 @@
   <ItemGroup>
     <ClCompile Include="Character.cpp" />
     <ClCompile Include="ChooseClothesEvent.cpp" />
+    <ClCompile Include="Control.cpp" />
     <ClCompile Include="Event.cpp" />
     <ClCompile Include="Image.cpp" />
     <ClCompile Include="Layer.cpp" />
@@ -156,6 +157,7 @@
     <ClCompile Include="MakeProtagonistEvent.cpp" />
     <ClCompile Include="Message.cpp" />
     <ClCompile Include="Music.cpp" />
+    <ClCompile Include="OptionWindows.cpp" />
     <ClCompile Include="Protagonist.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SceneTest.cpp" />
@@ -166,12 +168,14 @@
   <ItemGroup>
     <ClInclude Include="Character.h" />
     <ClInclude Include="ChooseClothesEvent.h" />
+    <ClInclude Include="Control.h" />
     <ClInclude Include="Event.h" />
     <ClInclude Include="Image.h" />
     <ClInclude Include="Layer.h" />
     <ClInclude Include="MakeProtagonistEvent.h" />
     <ClInclude Include="Message.h" />
     <ClInclude Include="Music.h" />
+    <ClInclude Include="OptionWindows.h" />
     <ClInclude Include="Protagonist.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneTest.h" />
