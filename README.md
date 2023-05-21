@@ -6,9 +6,9 @@ Engine written in C++ using SDL2.
 ![github1](https://github.com/Wiktor-Wewe/LoveStoryEngine/assets/86562675/ff714509-62db-4291-8ae3-c05d5c9c3be8)
 ![github2](https://github.com/Wiktor-Wewe/LoveStoryEngine/assets/86562675/67033c3b-b203-41e6-b823-e79df970bac3)
 
-Features:
--Lightweight
--Fast
+Features:\n
+-Lightweight\n
+-Fast\n
 -Displays graphics
 -Plays music and sound effects
 -Has its own simple scripting language called WeweScript
