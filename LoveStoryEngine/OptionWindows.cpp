@@ -51,15 +51,18 @@ bool OptionWindows::make()
         SDL_RenderCopy(this->_renderer, this->_textsTextures[i], NULL, this->_textsPositions[i]);
     }
 
-    SDL_RenderCopy(this->_renderer, this->_selectedFrame, NULL, this->_textsFramesPositions[this->selected]);
-
-    SDL_SetRenderTarget(this->_renderer, NULL);
+    this->update();
 
     return true;
 }
 
 void OptionWindows::update()
 {
+    SDL_SetRenderTarget(this->_renderer, this->_textureWithSelect);
+    SDL_RenderClear(this->_renderer);
+    SDL_RenderCopy(this->_renderer, this->_texture, NULL, NULL);
+    SDL_RenderCopy(this->_renderer, this->_selectedFrame, NULL, this->_textsFramesPositions[this->_selected]);
+    SDL_SetRenderTarget(this->_renderer, NULL);
 }
 
 SDL_Texture* OptionWindows::getTexture()
@@ -67,27 +70,32 @@ SDL_Texture* OptionWindows::getTexture()
     return this->_texture;
 }
 
+SDL_Texture* OptionWindows::getTextureWithSelect()
+{
+    return this->_textureWithSelect;
+}
+
 int OptionWindows::getSelectedId()
 {
-    return this->selected;
+    return this->_selected;
 }
 
 void OptionWindows::setSelect(int dy)
 {
     if (dy > 0) {
-        if (this->selected + dy < this->_texts.size()) {
-            this->selected += dy;
+        if (this->_selected + dy < this->_texts.size()) {
+            this->_selected += dy;
         }
         else {
-            this->selected = 0;
+            this->_selected = 0;
         }
     }
     else if (dy < 0) {
-        if (this->selected + dy < 0) {
-            this->selected = this->_texts.size() - 1;
+        if (this->_selected + dy < 0) {
+            this->_selected = this->_texts.size() - 1;
         }
         else {
-            this->selected += dy;
+            this->_selected += dy;
         }
     }
 }

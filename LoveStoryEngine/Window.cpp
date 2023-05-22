@@ -1,6 +1,6 @@
 #include "Window.h"
 
-void Window::_make()
+void Window::make()
 {
 	auto elementsOfSet = this->_elements[this->_set];
 
@@ -22,29 +22,78 @@ void Window::_make()
 	this->_sizeOfTextureY = heightTexture;
 
 	this->_texture = SDL_CreateTexture(this->_renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, widthTexture, heightTexture);
+	this->_textureWithSelect = SDL_CreateTexture(this->_renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, widthTexture, heightTexture);
 	SDL_SetRenderTarget(this->_renderer, this->_texture);
 	SDL_SetRenderDrawColor(this->_renderer, 255, 255, 255, 255);
 	SDL_RenderClear(this->_renderer);
 
 	this->_idInDrawOrder.push_back(std::vector<int>());
+	this->_rectInDrawOrder.push_back(std::vector<SDL_Rect*>());
 	int layer = 0;
 
 	SDL_Rect buff_rect = { 0, 0, elementsOfSet[0]->getSurface()->w , elementsOfSet[0]->getSurface()->h };
 	for (int i = 0; i < elementsOfSet.size(); i++) {
 		SDL_RenderCopy(this->_renderer, elementsOfSet[i]->getTexture(), NULL, &buff_rect);
 		this->_idInDrawOrder[layer].push_back(elementsOfSet[i]->getId());
+		SDL_Rect* buff_rect_pointer = new SDL_Rect{ buff_rect.x, buff_rect.y, buff_rect.w, buff_rect.h };
+		this->_rectInDrawOrder[layer].push_back(buff_rect_pointer);
 		buff_rect.x += elementsOfSet[i]->getSurface()->w;
 		if (buff_rect.x + buff_rect.w >= widthTexture) {
 			buff_rect.x = 0;
 			buff_rect.y += buff_rect.h;
 
 			this->_idInDrawOrder.push_back(std::vector<int>());
+			this->_rectInDrawOrder.push_back(std::vector<SDL_Rect*>());
 			layer++;
 		}
 	}
 	
-	SDL_SetRenderTarget(this->_renderer, NULL);
 	this->_windowRectToDraw = { 0, 0, widthTexture, this->_windowRect.h };
+	this->update();
+}
+
+void Window::update()
+{
+	SDL_SetRenderTarget(this->_renderer, this->_textureWithSelect);
+	SDL_RenderClear(this->_renderer);
+	SDL_RenderCopy(this->_renderer, this->_texture, NULL, NULL);
+	SDL_RenderCopy(this->_renderer, this->_selectFrame, NULL, this->_rectInDrawOrder[this->_selectedY][this->_selectedX]);
+	SDL_SetRenderTarget(this->_renderer, NULL);
+}
+
+SDL_Texture* Window::getTexture()
+{
+	return this->_texture;
+}
+
+SDL_Texture* Window::getTextureWithSelect()
+{
+	return this->_textureWithSelect;
+}
+
+SDL_Rect* Window::getWindowRectToDraw()
+{
+	return &this->_windowRectToDraw;
+}
+
+SDL_Rect* Window::getWindowRect()
+{
+	return &this->_windowRect;
+}
+
+void Window::setPosition(int x, int y, int w, int h)
+{
+	this->_windowRect = { x, y, w, h };
+}
+
+void Window::setElements(std::vector<std::vector<Image*>>& elements)
+{
+	this->_elements = elements;
+}
+
+void Window::setSelectFrame(SDL_Texture* frame)
+{
+	this->_selectFrame = frame;
 }
 
 void Window::changeSet(int set)
@@ -67,16 +116,6 @@ void Window::changeSet(int set)
 	}
 }
 
-bool Window::isWindowShow()
-{
-	return this->show;
-}
-
-void Window::setWindowStatus(bool status)
-{
-	this->show = status;
-}
-
 void Window::scroll(int dy)
 {
 	int maxh = this->_sizeOfTextureY - this->_windowRect.h;
@@ -86,9 +125,7 @@ void Window::scroll(int dy)
 }
 
 void Window::clear()
-{
-	this->show = false;
-	
+{	
 	SDL_DestroyTexture(this->_texture);
 	this->_texture = NULL;
 
@@ -102,9 +139,18 @@ void Window::clear()
 	this->_idInDrawOrder.clear();
 }
 
-void Window::draw()
+void Window::setCursor(int dx, int dy)
 {
-	SDL_RenderCopy(this->_renderer, this->_texture, &this->_windowRectToDraw, &this->_windowRect);
+	if (this->_selectedY + dy < 0) {
+		this->_selectedY = this->_idInDrawOrder.size() -1 - (dx * -1);
+	}
+	else if (this->_selectedX + dx < 0) {
+		this->_selectedX = this->_idInDrawOrder[this->_selectedY].size() -1 - (dy * -1);
+	}
+	else {
+		this->_selectedY = (this->_selectedY + dy) % this->_idInDrawOrder.size();
+		this->_selectedX = (this->_selectedX + dx) % this->_idInDrawOrder[this->_selectedY].size();
+	}
 }
 
 int Window::getSelectedIdFromImage(int mouseX, int mouseY)

@@ -15,6 +15,7 @@
 #include "OptionWindows.h"
 #include <fstream>
 #include <iostream>
+#include "Window.h"
 
 class Story
 {
@@ -48,6 +49,7 @@ public:
 		}
 		
 		this->_optionWindows = new OptionWindows(this->_renderer, this->_font, this->_findImageById(504)->getTexture(), this->_findImageById(505)->getTexture());
+		this->_window = new Window(this->_renderer);
 	}
 
 	std::string getName();
@@ -117,6 +119,10 @@ private:
 	void _handleMPE(MakeProtagonistEvent* mpe);
 	void _showMPEInfo(MakeProtagonistEvent* mpe);
 
+	// mpeTest
+	void _handleMPETest(MakeProtagonistEvent* mpe);
+	bool _handleMPELoopTest(MakeProtagonistEvent* mpe);
+
 	void _showCCE(ChooseClothesEvent* cce);
 	void _printInfoAboutPlayer();
 	std::string _tryGetName(Image* x, int id);
@@ -151,12 +157,13 @@ private:
 	void _wipeStrBuff(char* buff, int size);
 
 	// play variable
-	void searchNext(Message*& m, Event*& e, MakeProtagonistEvent*& mpe, ChooseClothesEvent*& cce);
+	void searchNext(Message*& m, Event*& e, MakeProtagonistEvent*& mpe, ChooseClothesEvent*& cce, int& messageid, int& eventid);
 	Scene* _scene;
 	SceneTest* _sceneTest;
 	SDL_Renderer* _renderer;
 	TTF_Font* _font;
 	OptionWindows* _optionWindows;
+	Window* _window;
 	int _currentMusicId;
 };
 

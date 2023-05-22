@@ -2,11 +2,13 @@
 
 void Control::add(int x)
 {
+	this->_status = true;
 	this->_keys.push_back(x);
 }
 
 void Control::clear()
 {
+	this->_status = false;
 	this->_keys.clear();
 }
 
@@ -18,4 +20,9 @@ bool Control::get(Action action)
 		}
 	}
 	return false;
+}
+
+bool Control::getStatus()
+{
+	return this->_status;
 }

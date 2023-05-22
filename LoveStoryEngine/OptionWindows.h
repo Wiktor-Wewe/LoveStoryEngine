@@ -15,11 +15,13 @@ public:
 
 		this->_position = { 0, 0, 640, 480 };
 		this->_texture = SDL_CreateTexture(this->_renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, this->_position.w, this->_position.h);
+		this->_textureWithSelect = SDL_CreateTexture(this->_renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, this->_position.w, this->_position.h);
 	}
 
 	bool make();
 	void update();
 	SDL_Texture* getTexture();
+	SDL_Texture* getTextureWithSelect();
 	int getSelectedId();
 	void setSelect(int dy);
 	void setTexts(std::vector<std::string> texts);
@@ -29,6 +31,7 @@ private:
 	TTF_Font* _font;
 	std::vector<std::string> _texts;
 	SDL_Texture* _texture;
+	SDL_Texture* _textureWithSelect;
 	SDL_Rect _position;
 	SDL_Rect _positionSrc;
 	
@@ -39,6 +42,6 @@ private:
 	std::vector<SDL_Rect*> _textsFramesPositions;
 
 	SDL_Texture* _selectedFrame;
-	int selected;
+	int _selected;
 };
 

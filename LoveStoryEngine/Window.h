@@ -4,42 +4,47 @@
 class Window
 {
 public:
-	Window(int x, int y, int w, int h, std::vector<std::vector<Image*>>& elements, SDL_Renderer* renderer) {
-		this->_windowRect = { x, h, w, h };
-
-		this->_elements = elements;
+	Window(SDL_Renderer* renderer) {
 		this->_renderer = renderer;
 
 		this->_set = 0;
 		this->_sizeOfTextureY = 0;
-		this->show = true;
-
-		this->_make();
+		this->_selectedX = 0;
+		this->_selectedY = 0;
 	}
 
+	void setPosition(int x, int y, int w, int h);
+	void setElements(std::vector<std::vector<Image*>>& elements);
+	void setSelectFrame(SDL_Texture* frame);
+	void make();
+	void update();
+
+	SDL_Texture* getTexture();
+	SDL_Texture* getTextureWithSelect();
+	SDL_Rect* getWindowRectToDraw();
+	SDL_Rect* getWindowRect();
+
 	void changeSet(int set);
-	bool isWindowShow();
-	void setWindowStatus(bool status);
 	void scroll(int dy);
 	void clear();
-	void draw();
+	void setCursor(int dx, int dy);
 	int getSelectedIdFromImage(int mouseX, int mouseY);
 
 private:
 	int _set;
 	int _sizeOfTextureY;
-
-	bool show;
+	int _selectedX;
+	int _selectedY;
 
 	std::vector<std::vector<Image*>> _elements;
 	std::vector<std::vector<int>> _idInDrawOrder;
-
-	void _make();
+	std::vector<std::vector<SDL_Rect*>> _rectInDrawOrder;
 
 	//SDL
 	SDL_Renderer* _renderer;
 	SDL_Texture* _texture;
 	SDL_Texture* _textureWithSelect;
+	SDL_Texture* _selectFrame;
 	SDL_Rect _windowRect;
 	SDL_Rect _windowRectToDraw;
 };

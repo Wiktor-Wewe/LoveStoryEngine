@@ -24,7 +24,7 @@ public:
 	bool addText(std::string text, int x, int y, TTF_Font* font, int r, int g, int b, int a);
 	bool tryRemoveText(int numberOfText);
 
-	bool addTexture(SDL_Texture* texture, int x, int y, int w, int h);
+	bool addTexture(SDL_Texture* texture, int x, int y, int w, int h, SDL_Rect* src = NULL);
 	bool tryRemoveTexture(int numberOfTexture);
 
 private:
@@ -40,5 +40,6 @@ private:
 
 	std::vector<SDL_Texture*> _textures;
 	std::vector<SDL_Rect*> _texturesPositions;
+	std::vector<SDL_Rect*> _texturesPositionsSrc;
 };
 

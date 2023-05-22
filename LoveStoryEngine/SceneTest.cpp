@@ -31,6 +31,7 @@ void SceneTest::clear()
     for (int i = 0; i < this->_layers.size(); i++) {
         this->_layers[i]->clear();
     }
+    this->_layers.clear();
 }
 
 Layer* SceneTest::getLayer(int number)

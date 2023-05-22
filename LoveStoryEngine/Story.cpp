@@ -140,7 +140,8 @@ int Story::play()
 
             if (pass && endOfEvent) {
                 if (pass) {
-                    this->searchNext(m, e, mpe, cce);
+                    int xa = 0, ya = 0;
+                    this->searchNext(m, e, mpe, cce, xa, ya);
                 }
                 pass = false;
 
@@ -169,7 +170,7 @@ int Story::play()
                             images[y].push_back(this->_findImageById(mpe->getFaces()[y][x]));
                         }
                     }
-                    this->_scene->makeWindow(330, 50, 230, 380, images);
+                    this->_scene->makeWindow(20, 100, 600, 440, images);
                     
                     // add BASE bgimage for mpe and cce
                     // add bgimage to script in mpe and cce - add this to compiler
@@ -238,6 +239,8 @@ int Story::playTest()
     bool quit = false;
     bool end = true;
     bool pass = false;
+    int messageId = 0;
+    int eventId = 0;
 
     while (!quit) //add frameSkip and frameLimit
     {
@@ -262,6 +265,12 @@ int Story::playTest()
                 if (event.key.keysym.sym == SDLK_RIGHT) {
                     this->_control.add(Control::right);
                 }
+                if (event.key.keysym.sym == SDLK_w) {
+                    this->_control.add(Control::special1);
+                }
+                if (event.key.keysym.sym == SDLK_s) {
+                    this->_control.add(Control::special2);
+                }
                 break;
             case SDL_MOUSEBUTTONDOWN:
                 if (event.button.button == SDL_BUTTON_LEFT) {
@@ -284,19 +293,42 @@ int Story::playTest()
         }
 
         if (e && end) {
-            this->_handleEventTest(e);
-            end = false;
+            if (e->getPlayerOptions().empty() && e->getPlayerOptions().empty()) {
+                pass = true;
+            }
+            else {
+                this->_handleEventTest(e);
+                end = false;
+                pass = false;
+            }
         }
         else if (e && !end) {
             if (this->_handleEventLoopTest(e)) {
-                m = this->_findMessageById(e->getNextMessages()[this->_optionWindows->getSelectedId()]);
-                e = nullptr;
+                pass = true;
+                end = true;
+                
+                if (e->getNextMessages().empty()) {
+                    eventId = e->getNextEvents()[this->_optionWindows->getSelectedId()];
+                }
+                else {
+                    messageId = e->getNextMessages()[this->_optionWindows->getSelectedId()];
+                }
+            }
+        }
+
+        if (mpe && end) {
+            this->_handleMPETest(mpe);
+            end = false;
+        }
+        else if (mpe && !end) {
+            pass = this->_handleMPELoopTest(mpe);
+            if (pass) {
                 end = true;
             }
         }
         
         if (pass) {
-            this->searchNext(m, e, mpe, cce);
+            this->searchNext(m, e, mpe, cce, messageId, eventId);
             pass = false;
         }
 
@@ -629,7 +661,7 @@ void Story::_handleEventTest(Event* e)
     this->_optionWindows->make();
 
     this->_sceneTest->addLayer();
-    this->_sceneTest->getLastLayer()->addTexture(this->_optionWindows->getTexture(), 0, 0, 640, 480);
+    this->_sceneTest->getLastLayer()->addTexture(this->_optionWindows->getTextureWithSelect(), 0, 0, 640, 480);
     this->_sceneTest->getLastLayer()->make();
 }
 
@@ -644,9 +676,9 @@ bool Story::_handleEventLoopTest(Event* e)
     }
 
     if (this->_control.get(Control::up) || this->_control.get(Control::down)) {
-        this->_optionWindows->make();
+        this->_optionWindows->update();
         this->_sceneTest->getLastLayer()->clear();
-        this->_sceneTest->getLastLayer()->addTexture(this->_optionWindows->getTexture(), 0, 0, 640, 480);
+        this->_sceneTest->getLastLayer()->addTexture(this->_optionWindows->getTextureWithSelect(), 0, 0, 640, 480);
         this->_sceneTest->getLastLayer()->make();
     }
 
@@ -704,6 +736,62 @@ void Story::_showMPEInfo(MakeProtagonistEvent* mpe)
 
     this->_printInfoAboutPlayer();
     system("pause");
+}
+
+void Story::_handleMPETest(MakeProtagonistEvent* mpe)
+{
+    std::vector<std::vector<Image*>> images;
+    for (int y = 0; y < mpe->getFaces().size(); y++) {
+        images.push_back(std::vector<Image*>());
+        for (int x = 0; x < mpe->getFaces()[y].size(); x++) {
+            images[y].push_back(this->_findImageById(mpe->getFaces()[y][x]));
+        }
+    }
+
+    this->_window->setPosition(330, 50, 230, 380);
+    this->_window->setElements(images);
+    this->_window->setSelectFrame(this->_findImageById(506)->getTexture());
+    this->_window->make();
+
+    this->_sceneTest->addLayer();
+    auto winrec = this->_window->getWindowRect();
+    auto winrecdr = this->_window->getWindowRectToDraw();
+    this->_sceneTest->getLastLayer()->addTexture(this->_window->getTextureWithSelect(), winrec->x, winrec->y, winrec->w, winrec->h, winrecdr);
+    this->_sceneTest->getLastLayer()->make();
+}
+
+bool Story::_handleMPELoopTest(MakeProtagonistEvent* mpe)
+{
+    if (this->_control.getStatus()) {
+        if (this->_control.get(Control::special1)) {
+            this->_window->scroll(-8);
+        }
+        if (this->_control.get(Control::special2)) {
+            this->_window->scroll(8);
+        }
+
+        if (this->_control.get(Control::up)) {
+            this->_window->setCursor(0, -1);
+        }
+        if (this->_control.get(Control::down)) {
+            this->_window->setCursor(0, 1);
+        }
+        if (this->_control.get(Control::left)) {
+            this->_window->setCursor(-1, 0);
+        }
+        if (this->_control.get(Control::right)) {
+            this->_window->setCursor(1, 0);
+        }
+
+        this->_window->update();
+        this->_sceneTest->getLastLayer()->clear();
+        auto winrec = this->_window->getWindowRect();
+        auto winrecdr = this->_window->getWindowRectToDraw();
+        this->_sceneTest->getLastLayer()->addTexture(this->_window->getTextureWithSelect(), winrec->x, winrec->y, winrec->w, winrec->h, winrecdr);
+        this->_sceneTest->getLastLayer()->make();
+    }
+
+    return false;
 }
 
 void Story::_showCCE(ChooseClothesEvent* cce)
@@ -1383,9 +1471,20 @@ void Story::_wipeStrBuff(char* buff, int size)
     memset(buff, 0, size);
 }
 
-void Story::searchNext(Message*& m, Event*& e, MakeProtagonistEvent*& mpe, ChooseClothesEvent*& cce)
+void Story::searchNext(Message*& m, Event*& e, MakeProtagonistEvent*& mpe, ChooseClothesEvent*& cce, int& messageid, int& eventid)
 {
-    if (m) {
+    if (messageid) {
+        this->_clsAndShowInfo();
+        e = nullptr;
+        m = this->_findMessageById(messageid);
+        messageid = 0;
+    }
+    else if (eventid) {
+        this->_clsAndShowInfo();
+        e = this->_findEventById(eventid);
+        eventid = 0;
+    }
+    else if (m) {
         this->_clsAndShowInfo();
         int nextMessage = m->getNextMessage();
 
