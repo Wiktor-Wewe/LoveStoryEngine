@@ -783,6 +783,10 @@ bool Story::_handleMPELoopTest(MakeProtagonistEvent* mpe)
             this->_window->setCursor(1, 0);
         }
 
+        if (this->_control.get(Control::go)) {
+            std::cout << "ID: " << this->_window->getSelectedId() << "\n";
+        }
+
         this->_window->update();
         this->_sceneTest->getLastLayer()->clear();
         auto winrec = this->_window->getWindowRect();

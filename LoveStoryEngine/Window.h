@@ -29,6 +29,7 @@ public:
 	void clear();
 	void setCursor(int dx, int dy);
 	int getSelectedIdFromImage(int mouseX, int mouseY);
+	int getSelectedId();
 
 private:
 	int _set;

@@ -143,6 +143,9 @@ void Window::setCursor(int dx, int dy)
 {
 	if (this->_selectedY + dy < 0) {
 		this->_selectedY = this->_idInDrawOrder.size() -1 - (dx * -1);
+		if (this->_idInDrawOrder[this->_selectedY].size() -1 < this->_selectedX) {
+			this->_selectedX = this->_idInDrawOrder[this->_selectedY].size() - 1;
+		}
 	}
 	else if (this->_selectedX + dx < 0) {
 		this->_selectedX = this->_idInDrawOrder[this->_selectedY].size() -1 - (dy * -1);
@@ -175,4 +178,9 @@ int Window::getSelectedIdFromImage(int mouseX, int mouseY)
 		return -1;
 	}
 	return 0;
+}
+
+int Window::getSelectedId()
+{
+	return this->_idInDrawOrder[this->_selectedY][this->_selectedX];
 }
