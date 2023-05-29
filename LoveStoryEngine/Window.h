@@ -4,6 +4,12 @@
 class Window
 {
 public:
+	enum Aling {
+		left = 0,
+		center = 1,
+		right = 2
+	};
+
 	Window(SDL_Renderer* renderer) {
 		this->_renderer = renderer;
 
@@ -11,11 +17,17 @@ public:
 		this->_sizeOfTextureY = 0;
 		this->_selectedX = 0;
 		this->_selectedY = 0;
+		this->_padding = 0;
+		this->_spaces = 0;
+		this->_aling = Window::left;
 	}
 
 	void setPosition(int x, int y, int w, int h);
 	void setElements(std::vector<std::vector<Image*>>& elements);
 	void setSelectFrame(SDL_Texture* frame);
+	void setPadding(int padding);
+	void setSpaces(int spaces);
+	void setAling(Aling aling);
 	void make();
 	void update();
 
@@ -36,6 +48,10 @@ private:
 	int _sizeOfTextureY;
 	int _selectedX;
 	int _selectedY;
+
+	int _padding;
+	int _spaces;
+	int _aling;
 
 	std::vector<std::vector<Image*>> _elements;
 	std::vector<std::vector<int>> _idInDrawOrder;
