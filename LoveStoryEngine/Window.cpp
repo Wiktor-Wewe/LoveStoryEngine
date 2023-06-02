@@ -34,27 +34,17 @@ void Window::make()
 	this->_rectInDrawOrder.push_back(std::vector<SDL_Rect*>());
 	int layer = 0;
 
-	if (this->_aling == Window::right) {
-		int lastLineX = widthTexture - this->_padding;
-		int index = 0;
-
-		SDL_Rect buff_rect = { this->_padding, this->_padding, elementsOfSet[0]->getSurface()->w , elementsOfSet[0]->getSurface()->h };
+	if (this->_align == Window::right) {
+		SDL_Rect buff_rect = { widthTexture - elementsOfSet[0]->getSurface()->w - this->_padding, this->_padding, elementsOfSet[0]->getSurface()->w , elementsOfSet[0]->getSurface()->h};
 		for (int i = 0; i < elementsOfSet.size(); i++) {
 			SDL_RenderCopy(this->_renderer, elementsOfSet[i]->getTexture(), NULL, &buff_rect);
 			this->_idInDrawOrder[layer].push_back(elementsOfSet[i]->getId());
 			SDL_Rect* buff_rect_pointer = new SDL_Rect{ buff_rect.x, buff_rect.y, buff_rect.w, buff_rect.h };
 			this->_rectInDrawOrder[layer].push_back(buff_rect_pointer);
-			buff_rect.x += elementsOfSet[i]->getSurface()->w + this->_spaces;
-			if (buff_rect.x + buff_rect.w >= widthTexture) {
-				buff_rect.x = this->_padding;
+			buff_rect.x -= elementsOfSet[i]->getSurface()->w + this->_spaces;
+			if (buff_rect.x < this->_padding) {
+				buff_rect.x = widthTexture - elementsOfSet[0]->getSurface()->w - this->_padding;
 				buff_rect.y += buff_rect.h + this->_spaces;
-				if (elementsOfSet.size() - i -1 < maxx) {
-					if (index > 0) {
-						lastLineX -= this->_spaces;
-					}
-					buff_rect.x = lastLineX - elementsOfSet[i]->getSurface()->w;;
-					index++;
-				}
 
 				this->_idInDrawOrder.push_back(std::vector<int>());
 				this->_rectInDrawOrder.push_back(std::vector<SDL_Rect*>());
@@ -62,10 +52,10 @@ void Window::make()
 			}
 		}
 	}
-	else if (this->_aling == Window::center) {
-
+	else if (this->_align == Window::center) {
+		
 	}
-	else if (this->_aling == Window::left) {
+	else if (this->_align == Window::left) {
 		SDL_Rect buff_rect = { this->_padding, this->_padding, elementsOfSet[0]->getSurface()->w , elementsOfSet[0]->getSurface()->h };
 		for (int i = 0; i < elementsOfSet.size(); i++) {
 			SDL_RenderCopy(this->_renderer, elementsOfSet[i]->getTexture(), NULL, &buff_rect);
@@ -148,9 +138,9 @@ void Window::setSpaces(int spaces)
 	}
 }
 
-void Window::setAling(Aling aling)
+void Window::setAlign(Align align)
 {
-	this->_aling = aling;
+	this->_align = align;
 }
 
 void Window::changeSet(int set)

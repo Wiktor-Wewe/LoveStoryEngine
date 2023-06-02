@@ -748,12 +748,12 @@ void Story::_handleMPETest(MakeProtagonistEvent* mpe)
         }
     }
 
-    this->_window->setPosition(330, 50, 230, 380);
+    this->_window->setPosition(20, 50, 600, 380);
     this->_window->setElements(images);
     this->_window->setSelectFrame(this->_findImageById(506)->getTexture());
     this->_window->setPadding(20);
     this->_window->setSpaces(10);
-    this->_window->setAling(Window::right);
+    this->_window->setAlign(Window::right);
     this->_window->make();
 
     this->_sceneTest->addLayer();

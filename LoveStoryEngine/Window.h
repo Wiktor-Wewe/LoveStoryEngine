@@ -4,7 +4,7 @@
 class Window
 {
 public:
-	enum Aling {
+	enum Align {
 		left = 0,
 		center = 1,
 		right = 2
@@ -19,7 +19,7 @@ public:
 		this->_selectedY = 0;
 		this->_padding = 0;
 		this->_spaces = 0;
-		this->_aling = Window::left;
+		this->_align = Window::left;
 	}
 
 	void setPosition(int x, int y, int w, int h);
@@ -27,7 +27,7 @@ public:
 	void setSelectFrame(SDL_Texture* frame);
 	void setPadding(int padding);
 	void setSpaces(int spaces);
-	void setAling(Aling aling);
+	void setAlign(Align aling);
 	void make();
 	void update();
 
@@ -51,7 +51,7 @@ private:
 
 	int _padding;
 	int _spaces;
-	int _aling;
+	int _align;
 
 	std::vector<std::vector<Image*>> _elements;
 	std::vector<std::vector<int>> _idInDrawOrder;
