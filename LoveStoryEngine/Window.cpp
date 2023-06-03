@@ -38,9 +38,11 @@ void Window::make()
 		SDL_Rect buff_rect = { widthTexture - elementsOfSet[0]->getSurface()->w - this->_padding, this->_padding, elementsOfSet[0]->getSurface()->w , elementsOfSet[0]->getSurface()->h};
 		for (int i = 0; i < elementsOfSet.size(); i++) {
 			SDL_RenderCopy(this->_renderer, elementsOfSet[i]->getTexture(), NULL, &buff_rect);
-			this->_idInDrawOrder[layer].push_back(elementsOfSet[i]->getId());
+			//this->_idInDrawOrder[layer].push_back(elementsOfSet[i]->getId());
+			this->_idInDrawOrder[layer].insert(this->_idInDrawOrder[layer].begin(), elementsOfSet[i]->getId());
 			SDL_Rect* buff_rect_pointer = new SDL_Rect{ buff_rect.x, buff_rect.y, buff_rect.w, buff_rect.h };
-			this->_rectInDrawOrder[layer].push_back(buff_rect_pointer);
+			//this->_rectInDrawOrder[layer].push_back(buff_rect_pointer);
+			this->_rectInDrawOrder[layer].insert(this->_rectInDrawOrder[layer].begin(), buff_rect_pointer);
 			buff_rect.x -= elementsOfSet[i]->getSurface()->w + this->_spaces;
 			if (buff_rect.x < this->_padding) {
 				buff_rect.x = widthTexture - elementsOfSet[0]->getSurface()->w - this->_padding;
@@ -53,7 +55,30 @@ void Window::make()
 		}
 	}
 	else if (this->_align == Window::center) {
-		
+		int fragment = ((widthTexture - (this->_padding * 2))) / (maxx + 1);
+		int element = 0;
+
+		SDL_Rect buff_rect = { (this->_padding + fragment) - (elementsOfSet[0]->getSurface()->w/2), this->_padding, elementsOfSet[0]->getSurface()->w , elementsOfSet[0]->getSurface()->h};
+		for (int i = 0; i < elementsOfSet.size(); i++) {
+			SDL_RenderCopy(this->_renderer, elementsOfSet[i]->getTexture(), NULL, &buff_rect);
+			this->_idInDrawOrder[layer].push_back(elementsOfSet[i]->getId());
+			SDL_Rect* buff_rect_pointer = new SDL_Rect{ buff_rect.x, buff_rect.y, buff_rect.w, buff_rect.h };
+			this->_rectInDrawOrder[layer].push_back(buff_rect_pointer);
+			buff_rect.x += (fragment + elementsOfSet[i]->getSurface()->w/2) - elementsOfSet[i]->getSurface()->w/2;
+			element++;
+			if (element % maxx == 0) {
+				buff_rect.x = (this->_padding + fragment) - (elementsOfSet[0]->getSurface()->w / 2);
+				buff_rect.y += buff_rect.h + this->_spaces;
+
+				this->_idInDrawOrder.push_back(std::vector<int>());
+				this->_rectInDrawOrder.push_back(std::vector<SDL_Rect*>());
+				layer++;
+				if (elementsOfSet.size() - 1 - i < maxx) {
+					fragment = ((widthTexture - (this->_padding * 2))) / ((elementsOfSet.size() - 1 - i)+1);
+					buff_rect.x = (this->_padding + fragment) - (elementsOfSet[i]->getSurface()->w / 2);
+				}
+			}
+		}
 	}
 	else if (this->_align == Window::left) {
 		SDL_Rect buff_rect = { this->_padding, this->_padding, elementsOfSet[0]->getSurface()->w , elementsOfSet[0]->getSurface()->h };
